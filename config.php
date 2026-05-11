@@ -1,8 +1,8 @@
 <?php
-const DB_HOST = '127.0.0.1';
+const DB_HOST = 'localhost';
 const DB_NAME = 'portale_parrucchieri';
-const DB_USER = 'root';
-const DB_PASS = '';
+const DB_USER = 'lu3g_usr';
+const DB_PASS = 'k8E7_li49';
 const APP_NAME = 'Liquid Barber';
 
 session_start();

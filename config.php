@@ -1,4 +1,22 @@
 <?php
+$localConfigPath = __DIR__ . '/config.local.php';
+$localConfig = is_readable($localConfigPath) ? require $localConfigPath : [];
+
+function config_value(array $localConfig, string $key, string $default = ''): string
+{
+    $envValue = getenv($key);
+    if ($envValue !== false) {
+        return $envValue;
+    }
+
+    return $localConfig[$key] ?? $default;
+}
+
+define('DB_HOST', config_value($localConfig, 'DB_HOST', '127.0.0.1'));
+define('DB_NAME', config_value($localConfig, 'DB_NAME', 'portale_parrucchieri'));
+define('DB_USER', config_value($localConfig, 'DB_USER', 'root'));
+define('DB_PASS', config_value($localConfig, 'DB_PASS'));
+define('APP_NAME', config_value($localConfig, 'APP_NAME', 'Liquid Barber'));
 const DB_HOST = 'localhost';
 const DB_NAME = 'portale_parrucchieri';
 const DB_USER = 'lu3g_usr';

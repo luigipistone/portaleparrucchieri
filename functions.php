@@ -69,6 +69,30 @@ function status_class(string $status): string
     };
 }
 
+
+function render_admin_menu(string $active): void
+{
+    $items = [
+        'dashboard' => ['label' => 'Dashboard', 'href' => 'admin.php', 'icon' => '⌁'],
+        'calendar' => ['label' => 'Calendario', 'href' => 'admin_calendar.php', 'icon' => '◷'],
+        'services' => ['label' => 'Servizi', 'href' => 'admin_services.php', 'icon' => '✂'],
+        'users' => ['label' => 'Utenti', 'href' => 'admin_users.php', 'icon' => '◎'],
+    ];
+    ?>
+    <aside class="admin-menu glass-panel reveal">
+        <p class="eyebrow">Menu admin</p>
+        <nav>
+            <?php foreach ($items as $key => $item): ?>
+                <a class="admin-menu-link <?= $active === $key ? 'active' : '' ?>" href="<?= e($item['href']) ?>">
+                    <span><?= e($item['icon']) ?></span>
+                    <?= e($item['label']) ?>
+                </a>
+            <?php endforeach; ?>
+        </nav>
+    </aside>
+    <?php
+}
+
 function render_header(string $title): void
 {
     $user = current_user();

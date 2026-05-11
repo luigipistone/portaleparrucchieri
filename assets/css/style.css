@@ -230,3 +230,17 @@ th { color: var(--text); font-size: 12px; text-transform: uppercase; letter-spac
 @media (max-width: 860px) {
     .kpi-grid, .insights-grid { grid-template-columns: 1fr; }
 }
+
+.profile-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(280px, .8fr); gap: 22px; margin-top: 34px; align-items: start; }
+.profile-card { padding: 28px; }
+.password-panel { display: grid; gap: 14px; margin-top: 8px; padding: 18px; border-radius: 22px; background: rgba(255,255,255,.07); }
+.password-panel p { margin: 0; }
+.profile-summary { display: grid; grid-template-columns: 120px 1fr; gap: 14px; margin-top: 22px; }
+.profile-summary span { color: var(--muted); font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; }
+.profile-summary strong { color: var(--text); overflow-wrap: anywhere; }
+.compact-actions { margin-top: 0; justify-content: flex-end; }
+
+@media (max-width: 860px) {
+    .profile-grid { grid-template-columns: 1fr; }
+    .compact-actions { justify-content: flex-start; }
+}

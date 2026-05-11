@@ -7,7 +7,7 @@ Web app PHP, JavaScript e MySQL per la gestione di un salone di parrucchieri da 
 - Frontend pubblico in stile liquid/glass design con animazioni, font moderni e UI responsive.
 - Richiesta appuntamento per utenti registrati e ospiti.
 - Conferma, annullamento e gestione note da backoffice admin.
-- Registrazione/login clienti con dashboard personale.
+- Registrazione/login clienti con dashboard personale e modifica profilo.
 - Backend admin strutturato con menu, pagine separate e dashboard KPI dettagliata.
 - CRUD servizi dal pannello admin.
 - Vista calendario/lista appuntamenti ordinata per data.
@@ -24,14 +24,6 @@ mysql -u root -p < migrations/002_seed_initial_data.sql
 2. Copiare `config.local.php.example` in `config.local.php` e inserire le credenziali database reali. Il file `config.local.php` è escluso da Git per non salvare password nel repository.
 3. In alternativa, impostare le variabili ambiente `DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASS` e `APP_NAME`.
 4. Avviare il server PHP dalla root del progetto:
-- CRUD servizi dal pannello admin.
-- Vista calendario/lista appuntamenti ordinata per data.
-
-## Installazione
-
-1. Importare `schema.sql` in MySQL.
-2. Aggiornare le credenziali database in `config.php`.
-3. Avviare il server PHP dalla root del progetto:
 
 ```bash
 php -S 127.0.0.1:8000

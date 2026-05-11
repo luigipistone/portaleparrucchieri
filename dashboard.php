@@ -12,7 +12,10 @@ render_header('Area utente');
         <h1>Ciao, <?= e($user['name']) ?>.</h1>
         <p>Monitora le richieste inviate come utente registrato o associate alla tua email.</p>
     </div>
-    <a class="btn primary" href="index.php#prenota">Nuova richiesta</a>
+    <div class="hero-actions compact-actions">
+        <a class="btn ghost" href="profile.php">Modifica profilo</a>
+        <a class="btn primary" href="index.php#prenota">Nuova richiesta</a>
+    </div>
 </section>
 <section class="table-card glass-panel reveal">
     <h2>I tuoi appuntamenti</h2>

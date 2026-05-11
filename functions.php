@@ -123,6 +123,7 @@ function render_header(string $title): void
                     <a href="admin.php">Admin</a>
                 <?php elseif ($user): ?>
                     <a href="dashboard.php">Area utente</a>
+                    <a href="profile.php">Profilo</a>
                 <?php endif; ?>
                 <?php if ($user): ?>
                     <a class="nav-pill" href="logout.php">Esci</a>

@@ -17,6 +17,11 @@ define('DB_NAME', config_value($localConfig, 'DB_NAME', 'portale_parrucchieri'))
 define('DB_USER', config_value($localConfig, 'DB_USER', 'root'));
 define('DB_PASS', config_value($localConfig, 'DB_PASS'));
 define('APP_NAME', config_value($localConfig, 'APP_NAME', 'Liquid Barber'));
+const DB_HOST = 'localhost';
+const DB_NAME = 'portale_parrucchieri';
+const DB_USER = 'lu3g_usr';
+const DB_PASS = 'k8E7_li49';
+const APP_NAME = 'Liquid Barber';
 
 session_start();
 

@@ -52,3 +52,4 @@ ON DUPLICATE KEY UPDATE
     duration_minutes = VALUES(duration_minutes),
     price = VALUES(price),
     is_active = VALUES(is_active);
+ON DUPLICATE KEY UPDATE name = VALUES(name);

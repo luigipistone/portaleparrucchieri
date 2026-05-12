@@ -30,7 +30,7 @@ render_header('Trova prenotazione');
     <div>
         <p class="eyebrow">Prenotazioni guest</p>
         <h1>Trova la tua richiesta</h1>
-        <p>Inserisci email e telefono o apri il link personale ricevuto dopo la richiesta per controllare lo stato.</p>
+        <p>Inserisci il codice prenotazione ricevuto via email oppure usa email e telefono lasciati nella richiesta.</p>
     </div>
     <a class="btn primary" href="index.php#prenota">Nuova richiesta</a>
 </section>
@@ -38,7 +38,7 @@ render_header('Trova prenotazione');
 <section class="booking-lookup-grid">
     <form class="profile-card glass-panel reveal liquid-form single" method="post">
         <p class="eyebrow">Ricerca</p>
-        <label>Codice/link prenotazione
+        <label>Codice prenotazione
             <input name="token" value="<?= e($token) ?>" placeholder="Token opzionale">
         </label>
         <label>Email usata in prenotazione
@@ -56,7 +56,7 @@ render_header('Trova prenotazione');
         <?php endif; ?>
 
         <?php foreach ($appointments as $appointment): ?>
-            <?php $basePath = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '')), '/'); $shareUrl = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . $basePath . '/booking_lookup.php?token=' . urlencode($appointment['booking_token']); ?>
+            <?php $lookupUrl = booking_lookup_url($appointment['booking_token']); $qrUrl = qr_code_url($lookupUrl); $whatsappSummary = whatsapp_message_link($appointment['guest_phone'], 'Codice prenotazione ' . APP_NAME . ': ' . $appointment['booking_token'] . ' - QR/link: ' . $lookupUrl); ?>
             <article class="profile-card glass-panel reveal booking-result">
                 <div>
                     <p class="eyebrow">Stato richiesta</p>
@@ -72,9 +72,10 @@ render_header('Trova prenotazione');
                 </div>
                 <?php if ($appointment['booking_token']): ?>
                     <div class="booking-token-box">
-                        <span>Link personale</span>
-                        <input readonly value="<?= e($shareUrl) ?>" onclick="this.select()">
-                        <img class="qr-card" src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=<?= urlencode($shareUrl) ?>" alt="QR code per aprire il riepilogo prenotazione">
+                        <span>Codice prenotazione</span>
+                        <strong class="booking-token-code"><?= e($appointment['booking_token']) ?></strong>
+                        <img class="qr-card" src="<?= e($qrUrl) ?>" alt="QR code per aprire il riepilogo prenotazione">
+                        <?php if ($whatsappSummary): ?><a class="btn whatsapp-btn" href="<?= e($whatsappSummary) ?>" target="_blank" rel="noopener">Inviami token e QR su WhatsApp</a><?php endif; ?>
                     </div>
                 <?php endif; ?>
             </article>

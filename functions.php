@@ -73,7 +73,65 @@ function status_class(string $status): string
 
 function make_booking_token(): string
 {
-    return bin2hex(random_bytes(16));
+    return (string) random_int(100000, 999999);
+}
+
+function absolute_url(string $path): string
+{
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    $basePath = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '')), '/');
+
+    return $scheme . '://' . $host . $basePath . '/' . ltrim($path, '/');
+}
+
+function booking_lookup_url(string $token): string
+{
+    return absolute_url('booking_lookup.php?token=' . urlencode($token));
+}
+
+function qr_code_url(string $data, int $size = 180): string
+{
+    return 'https://api.qrserver.com/v1/create-qr-code/?size=' . $size . 'x' . $size . '&data=' . urlencode($data);
+}
+
+function whatsapp_message_link(?string $phone, string $message = ''): ?string
+{
+    $link = whatsapp_link($phone);
+    if (!$link) {
+        return null;
+    }
+
+    return $message ? $link . '?text=' . rawurlencode($message) : $link;
+}
+
+function send_booking_summary_email(string $to, array $appointment): bool
+{
+    $token = $appointment['booking_token'] ?? '';
+    $lookupUrl = booking_lookup_url($token);
+    $qrUrl = qr_code_url($lookupUrl);
+    $subject = 'Riepilogo richiesta appuntamento ' . APP_NAME;
+    $message = implode(PHP_EOL, [
+        'Ciao ' . $appointment['guest_name'] . ',',
+        '',
+        'Abbiamo ricevuto la tua richiesta di appuntamento.',
+        '',
+        'Codice prenotazione: ' . $token,
+        'Servizio: ' . $appointment['service_name'],
+        'Data e ora: ' . date('d/m/Y H:i', strtotime($appointment['appointment_at'])),
+        'Stato: ' . appointment_status_label($appointment['status']),
+        '',
+        'Puoi controllare la prenotazione inserendo il codice qui:',
+        $lookupUrl,
+        '',
+        'QR code: ' . $qrUrl,
+        '',
+        APP_NAME,
+    ]);
+    $host = preg_replace('/:\d+$/', '', $_SERVER['HTTP_HOST'] ?? 'localhost');
+    $headers = ['From: ' . APP_NAME . ' <no-reply@' . $host . '>'];
+
+    return @mail($to, $subject, $message, implode("\r\n", $headers));
 }
 
 function whatsapp_link(?string $phone): ?string

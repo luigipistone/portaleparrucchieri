@@ -51,13 +51,36 @@ function initAppointmentMinDate() {
         now.setMinutes(roundedMinutes, 0, 0);
         now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
         appointmentInput.min = now.toISOString().slice(0, 16);
-        appointmentInput.step = appointmentInput.step || '1800';
+        appointmentInput.step = '1800';
 
         if (appointmentInput.dataset.pickerReady === 'true') {
             return;
         }
 
         appointmentInput.dataset.pickerReady = 'true';
+        const openPicker = () => {
+            if (typeof appointmentInput.showPicker === 'function') {
+                try {
+                    appointmentInput.showPicker();
+                } catch (error) {
+                    // Some browsers allow showPicker only during direct pointer activation.
+                }
+            }
+        };
+        const normalizeMinutes = () => {
+            if (!appointmentInput.value) {
+                return;
+            }
+
+            const [date, time] = appointmentInput.value.split('T');
+            const [hours, minutes] = time.split(':').map(Number);
+            const normalizedMinutes = minutes < 30 ? '00' : '30';
+            appointmentInput.value = `${date}T${String(hours).padStart(2, '0')}:${normalizedMinutes}`;
+        };
+
+        appointmentInput.addEventListener('click', openPicker);
+        appointmentInput.addEventListener('focus', openPicker);
+        appointmentInput.addEventListener('change', normalizeMinutes);
         appointmentInput.addEventListener('keydown', (event) => event.preventDefault());
         appointmentInput.addEventListener('paste', (event) => event.preventDefault());
         appointmentInput.addEventListener('drop', (event) => event.preventDefault());

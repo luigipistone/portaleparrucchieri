@@ -15,10 +15,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$serviceId || !$appointmentAt || !$guestName || !$guestEmail || !$guestPhone) {
         flash('Compila servizio, data, nome, email e telefono per richiedere l’appuntamento.', 'danger');
     } else {
-        $bookingToken = make_booking_token();
+        do {
+            $bookingToken = make_booking_token();
+            $stmt = db()->prepare('SELECT id FROM appointments WHERE booking_token = ?');
+            $stmt->execute([$bookingToken]);
+        } while ($stmt->fetch());
+
+        $appointmentDate = str_replace('T', ' ', $appointmentAt) . ':00';
         $stmt = db()->prepare('INSERT INTO appointments (user_id, service_id, guest_name, guest_email, guest_phone, appointment_at, notes, booking_token, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, "pending")');
-        $stmt->execute([$user['id'] ?? null, $serviceId, $guestName, $guestEmail, $guestPhone, str_replace('T', ' ', $appointmentAt) . ':00', $notes, $bookingToken]);
-        flash('Richiesta inviata! Salva il link di riepilogo per controllare lo stato della prenotazione.');
+        $stmt->execute([$user['id'] ?? null, $serviceId, $guestName, $guestEmail, $guestPhone, $appointmentDate, $notes, $bookingToken]);
+
+        $stmt = db()->prepare('SELECT a.*, s.name AS service_name FROM appointments a JOIN services s ON s.id = a.service_id WHERE a.id = ?');
+        $stmt->execute([db()->lastInsertId()]);
+        $createdAppointment = $stmt->fetch();
+        if ($createdAppointment) {
+            send_booking_summary_email($guestEmail, $createdAppointment);
+        }
+
+        flash('Richiesta inviata! Ti abbiamo inviato via email il codice prenotazione e il QR code.');
         header('Location: booking_lookup.php?token=' . urlencode($bookingToken));
         exit;
     }

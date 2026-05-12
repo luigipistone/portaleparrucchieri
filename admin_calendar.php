@@ -58,6 +58,7 @@ render_header('Calendario admin');
                             <?php $whatsappLink = whatsapp_link($appointment['guest_phone']); ?>
                             <h3><?= e($appointment['guest_name']) ?> · <?= e($appointment['service_name']) ?></h3>
                             <p><?= e($appointment['guest_email']) ?> <?= e($appointment['guest_phone']) ?> · <?= (int) $appointment['duration_minutes'] ?> min</p>
+                            <?php if ($appointment['booking_token']): ?><p><strong>Codice prenotazione:</strong> <code><?= e($appointment['booking_token']) ?></code></p><?php endif; ?>
                             <?php if ($whatsappLink): ?><a class="btn whatsapp-btn" href="<?= e($whatsappLink) ?>" target="_blank" rel="noopener">WhatsApp</a><?php endif; ?>
                             <?php if ($appointment['notes']): ?><p><strong>Note cliente:</strong> <?= e($appointment['notes']) ?></p><?php endif; ?>
                             <form class="inline-admin" method="post">

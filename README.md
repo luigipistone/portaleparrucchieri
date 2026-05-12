@@ -12,7 +12,7 @@ Web app PHP, JavaScript e MySQL per la gestione di un salone di parrucchieri da 
 - CRUD servizi dal pannello admin.
 - Vista calendario/lista appuntamenti ordinata per data.
 - Azioni principali in pagina senza reload grazie a richieste AJAX progressive.
-- Consultazione prenotazioni guest tramite email/telefono o link personale con QR code.
+- Consultazione prenotazioni guest tramite codice numerico ricevuto via email, email/telefono e QR code.
 
 ## Installazione locale
 

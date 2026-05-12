@@ -58,10 +58,15 @@ render_header('Trova prenotazione');
         <?php foreach ($appointments as $appointment): ?>
             <?php $lookupUrl = booking_lookup_url($appointment['booking_token']); $qrUrl = qr_code_url($lookupUrl); $whatsappSummary = whatsapp_message_link($appointment['guest_phone'], 'Codice prenotazione ' . APP_NAME . ': ' . $appointment['booking_token'] . ' - QR/link: ' . $lookupUrl); ?>
             <article class="profile-card glass-panel reveal booking-result">
-                <div>
-                    <p class="eyebrow">Stato richiesta</p>
-                    <h2><?= e($appointment['service_name']) ?></h2>
-                    <span class="badge <?= status_class($appointment['status']) ?>"><?= appointment_status_label($appointment['status']) ?></span>
+                <div class="booking-result-head">
+                    <div>
+                        <p class="eyebrow">Stato richiesta</p>
+                        <h2><?= e($appointment['service_name']) ?></h2>
+                    </div>
+                    <div class="booking-status-actions">
+                        <span class="badge <?= status_class($appointment['status']) ?>"><?= appointment_status_label($appointment['status']) ?></span>
+                        <?php if ($whatsappSummary): ?><a class="btn whatsapp-btn" href="<?= e($whatsappSummary) ?>" target="_blank" rel="noopener">Inviami token e QR su WhatsApp</a><?php endif; ?>
+                    </div>
                 </div>
                 <div class="profile-summary">
                     <span>Data</span><strong><?= date('d/m/Y H:i', strtotime($appointment['appointment_at'])) ?></strong>
@@ -75,7 +80,6 @@ render_header('Trova prenotazione');
                         <span>Codice prenotazione</span>
                         <strong class="booking-token-code"><?= e($appointment['booking_token']) ?></strong>
                         <img class="qr-card" src="<?= e($qrUrl) ?>" alt="QR code per aprire il riepilogo prenotazione">
-                        <?php if ($whatsappSummary): ?><a class="btn whatsapp-btn" href="<?= e($whatsappSummary) ?>" target="_blank" rel="noopener">Inviami token e QR su WhatsApp</a><?php endif; ?>
                     </div>
                 <?php endif; ?>
             </article>

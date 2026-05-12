@@ -50,17 +50,25 @@ render_header('Calendario admin');
 
         <div class="glass-panel admin-panel reveal delay-1">
             <h2>Agenda</h2>
-            <div class="calendar-list">
+            <div class="calendar-list compact-calendar">
                 <?php foreach ($appointments as $appointment): ?>
                     <article class="calendar-item <?= status_class($appointment['status']) ?>">
                         <time><?= date('d/m', strtotime($appointment['appointment_at'])) ?><span><?= date('H:i', strtotime($appointment['appointment_at'])) ?></span></time>
-                        <div>
+                        <div class="appointment-row">
                             <?php $whatsappLink = whatsapp_link($appointment['guest_phone']); ?>
-                            <h3><?= e($appointment['guest_name']) ?> · <?= e($appointment['service_name']) ?></h3>
-                            <p><?= e($appointment['guest_email']) ?> <?= e($appointment['guest_phone']) ?> · <?= (int) $appointment['duration_minutes'] ?> min</p>
-                            <?php if ($appointment['booking_token']): ?><p><strong>Codice prenotazione:</strong> <code><?= e($appointment['booking_token']) ?></code></p><?php endif; ?>
-                            <?php if ($whatsappLink): ?><a class="btn whatsapp-btn" href="<?= e($whatsappLink) ?>" target="_blank" rel="noopener">WhatsApp</a><?php endif; ?>
-                            <?php if ($appointment['notes']): ?><p><strong>Note cliente:</strong> <?= e($appointment['notes']) ?></p><?php endif; ?>
+                            <div>
+                                <h3><?= e($appointment['guest_name']) ?> · <?= e($appointment['service_name']) ?></h3>
+                                <div class="appointment-meta">
+                                    <span><?= e($appointment['guest_email']) ?></span>
+                                    <span><?= e($appointment['guest_phone']) ?></span>
+                                    <span><?= (int) $appointment['duration_minutes'] ?> min</span>
+                                    <?php if ($appointment['booking_token']): ?><code>Cod. <?= e($appointment['booking_token']) ?></code><?php endif; ?>
+                                    <?php if ($appointment['notes']): ?><span>Note: <?= e($appointment['notes']) ?></span><?php endif; ?>
+                                </div>
+                            </div>
+                            <div class="appointment-actions">
+                                <?php if ($whatsappLink): ?><a class="btn whatsapp-btn" href="<?= e($whatsappLink) ?>" target="_blank" rel="noopener">WhatsApp</a><?php endif; ?>
+                            </div>
                             <form class="inline-admin" method="post">
                                 <input type="hidden" name="id" value="<?= (int) $appointment['id'] ?>">
                                 <select name="status"><option value="pending" <?= $appointment['status'] === 'pending' ? 'selected' : '' ?>>In attesa</option><option value="confirmed" <?= $appointment['status'] === 'confirmed' ? 'selected' : '' ?>>Confermato</option><option value="cancelled" <?= $appointment['status'] === 'cancelled' ? 'selected' : '' ?>>Annullato</option></select>

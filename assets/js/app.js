@@ -78,6 +78,7 @@ function initAppointmentMinDate() {
             appointmentInput.value = `${date}T${String(hours).padStart(2, '0')}:${normalizedMinutes}`;
         };
 
+        appointmentInput.addEventListener('pointerdown', openPicker);
         appointmentInput.addEventListener('click', openPicker);
         appointmentInput.addEventListener('focus', openPicker);
         appointmentInput.addEventListener('change', normalizeMinutes);

@@ -2,18 +2,20 @@
 require_once __DIR__ . '/functions.php';
 
 $services = db()->query('SELECT * FROM services WHERE is_active = 1 ORDER BY price ASC')->fetchAll();
+$staffMembers = db()->query('SELECT * FROM staff_members WHERE is_active = 1 ORDER BY name ASC')->fetchAll();
 $user = current_user();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $serviceId = (int) ($_POST['service_id'] ?? 0);
+    $staffId = (int) ($_POST['staff_id'] ?? 0);
     $appointmentAt = trim($_POST['appointment_at'] ?? '');
     $notes = trim($_POST['notes'] ?? '');
     $guestName = trim($_POST['guest_name'] ?? ($user['name'] ?? ''));
     $guestEmail = trim($_POST['guest_email'] ?? ($user['email'] ?? ''));
     $guestPhone = trim($_POST['guest_phone'] ?? ($user['phone'] ?? ''));
 
-    if (!$serviceId || !$appointmentAt || !$guestName || !$guestEmail || !$guestPhone) {
-        flash('Compila servizio, data, nome, email e telefono per richiedere l’appuntamento.', 'danger');
+    if (!$serviceId || !$staffId || !$appointmentAt || !$guestName || !$guestEmail || !$guestPhone) {
+        flash('Compila servizio, operatore, data, nome, email e telefono per richiedere l’appuntamento.', 'danger');
     } else {
         do {
             $bookingToken = make_booking_token();
@@ -22,10 +24,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } while ($stmt->fetch());
 
         $appointmentDate = str_replace('T', ' ', $appointmentAt) . ':00';
-        $stmt = db()->prepare('INSERT INTO appointments (user_id, service_id, guest_name, guest_email, guest_phone, appointment_at, notes, booking_token, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, "pending")');
-        $stmt->execute([$user['id'] ?? null, $serviceId, $guestName, $guestEmail, $guestPhone, $appointmentDate, $notes, $bookingToken]);
+        $stmt = db()->prepare('INSERT INTO appointments (user_id, service_id, staff_id, guest_name, guest_email, guest_phone, appointment_at, notes, booking_token, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, "pending")');
+        $stmt->execute([$user['id'] ?? null, $serviceId, $staffId, $guestName, $guestEmail, $guestPhone, $appointmentDate, $notes, $bookingToken]);
 
-        $stmt = db()->prepare('SELECT a.*, s.name AS service_name FROM appointments a JOIN services s ON s.id = a.service_id WHERE a.id = ?');
+        $stmt = db()->prepare('SELECT a.*, s.name AS service_name, st.name AS staff_name FROM appointments a JOIN services s ON s.id = a.service_id LEFT JOIN staff_members st ON st.id = a.staff_id WHERE a.id = ?');
         $stmt->execute([db()->lastInsertId()]);
         $createdAppointment = $stmt->fetch();
         if ($createdAppointment) {
@@ -91,6 +93,14 @@ render_header('Prenotazioni barbiere');
                 <option value="">Seleziona</option>
                 <?php foreach ($services as $service): ?>
                     <option value="<?= (int) $service['id'] ?>"><?= e($service['name']) ?> · €<?= number_format((float) $service['price'], 2, ',', '.') ?></option>
+                <?php endforeach; ?>
+            </select>
+        </label>
+        <label><span class="field-label">Operatore <span class="required-marker" aria-hidden="true">*</span></span>
+            <select name="staff_id" required>
+                <option value="">Qualsiasi professionista</option>
+                <?php foreach ($staffMembers as $member): ?>
+                    <option value="<?= (int) $member['id'] ?>"><?= e($member['name']) ?> · <?= e($member['role_title']) ?></option>
                 <?php endforeach; ?>
             </select>
         </label>

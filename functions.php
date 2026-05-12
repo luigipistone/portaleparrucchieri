@@ -50,6 +50,7 @@ function icon_svg(string $name, string $class = 'ui-icon'): string
         'calendar' => '<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16"/>',
         'services' => '<path d="M4 19l6-6M14 5l5 5M13 6l5 5-8 8H5v-5l8-8z"/>',
         'users' => '<path d="M16 19c0-2.2-1.8-4-4-4s-4 1.8-4 4"/><circle cx="12" cy="8" r="3"/><path d="M20 18c-.3-1.7-1.5-3-3-3.6M4 18c.3-1.7 1.5-3 3-3.6"/>',
+        'staff' => '<path d="M4 20c0-3 2.7-5 6-5h4c3.3 0 6 2 6 5"/><circle cx="12" cy="7" r="3"/><path d="M8 11h8M9 4h6"/>',
         'check' => '<path d="M5 12l4 4L19 6"/>',
         'trash' => '<path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 14h10l1-14"/><path d="M9 7V4h6v3"/>',
         'edit' => '<path d="M4 20h4l10.5-10.5a2.1 2.1 0 0 0-3-3L5 17v3z"/><path d="M13.5 7.5l3 3"/>',
@@ -143,6 +144,7 @@ function send_booking_summary_email(string $to, array $appointment): bool
         '',
         'Codice prenotazione: ' . $token,
         'Servizio: ' . $appointment['service_name'],
+        'Operatore: ' . ($appointment['staff_name'] ?? 'Da assegnare'),
         'Data e ora: ' . date('d/m/Y H:i', strtotime($appointment['appointment_at'])),
         'Stato: ' . appointment_status_label($appointment['status']),
         '',
@@ -182,6 +184,7 @@ function render_admin_menu(string $active): void
         'calendar' => ['label' => 'Calendario', 'href' => 'admin_calendar.php', 'icon' => 'calendar'],
         'services' => ['label' => 'Servizi', 'href' => 'admin_services.php', 'icon' => 'services'],
         'users' => ['label' => 'Utenti', 'href' => 'admin_users.php', 'icon' => 'users'],
+        'staff' => ['label' => 'Staff', 'href' => 'admin_staff.php', 'icon' => 'staff'],
     ];
     ?>
     <aside class="admin-menu glass-panel reveal">

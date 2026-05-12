@@ -8,6 +8,7 @@ $appointments = [];
 $searched = false;
 $pdo = db();
 $services = $pdo->query('SELECT id, name FROM services WHERE is_active = 1 ORDER BY name ASC')->fetchAll();
+$staffMembers = $pdo->query('SELECT id, name, role_title FROM staff_members WHERE is_active = 1 ORDER BY name ASC')->fetchAll();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($_POST['action'] ?? '', ['appointment_update', 'appointment_delete'], true)) {
     $action = $_POST['action'];
@@ -23,10 +24,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($_POST['action'] ?? '', ['
     }
 
     $serviceId = (int) ($_POST['service_id'] ?? 0);
+    $staffId = (int) ($_POST['staff_id'] ?? 0);
     $appointmentAt = trim($_POST['appointment_at'] ?? '');
     $notes = trim($_POST['notes'] ?? '');
 
-    if (!$serviceId || !$appointmentAt) {
+    if (!$serviceId || !$staffId || !$appointmentAt) {
         flash('Seleziona servizio, data e ora per modificare la prenotazione.', 'danger');
     } else {
         $checkStmt = $pdo->prepare('SELECT id FROM appointments WHERE id = ? AND booking_token = ? AND status = "pending"');
@@ -34,8 +36,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($_POST['action'] ?? '', ['
 
         if ($checkStmt->fetch()) {
             $appointmentDate = str_replace('T', ' ', $appointmentAt) . ':00';
-            $stmt = $pdo->prepare('UPDATE appointments SET service_id = ?, appointment_at = ?, notes = ? WHERE id = ?');
-            $stmt->execute([$serviceId, $appointmentDate, $notes, $appointmentId]);
+            $stmt = $pdo->prepare('UPDATE appointments SET service_id = ?, staff_id = ?, appointment_at = ?, notes = ? WHERE id = ?');
+            $stmt->execute([$serviceId, $staffId, $appointmentDate, $notes, $appointmentId]);
             flash('Prenotazione modificata.');
         } else {
             flash('Puoi modificare solo prenotazioni guest in attesa.', 'danger');
@@ -47,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($_POST['action'] ?? '', ['
 }
 
 if ($token) {
-    $stmt = $pdo->prepare('SELECT a.*, s.name AS service_name, s.duration_minutes, s.price FROM appointments a JOIN services s ON s.id = a.service_id WHERE a.booking_token = ? ORDER BY a.appointment_at DESC');
+    $stmt = $pdo->prepare('SELECT a.*, s.name AS service_name, s.duration_minutes, s.price, st.name AS staff_name, st.role_title AS staff_role FROM appointments a JOIN services s ON s.id = a.service_id LEFT JOIN staff_members st ON st.id = a.staff_id WHERE a.booking_token = ? ORDER BY a.appointment_at DESC');
     $stmt->execute([$token]);
     $appointments = $stmt->fetchAll();
     $searched = true;
@@ -57,7 +59,7 @@ if ($token) {
         flash('Inserisci email e telefono usati nella richiesta.', 'danger');
     } else {
         $phoneDigits = preg_replace('/\D+/', '', $phone);
-        $stmt = $pdo->prepare('SELECT a.*, s.name AS service_name, s.duration_minutes, s.price FROM appointments a JOIN services s ON s.id = a.service_id WHERE a.guest_email = ? AND REPLACE(REPLACE(REPLACE(REPLACE(a.guest_phone, " ", ""), "+", ""), "-", ""), "/", "") LIKE ? ORDER BY a.appointment_at DESC');
+        $stmt = $pdo->prepare('SELECT a.*, s.name AS service_name, s.duration_minutes, s.price, st.name AS staff_name, st.role_title AS staff_role FROM appointments a JOIN services s ON s.id = a.service_id LEFT JOIN staff_members st ON st.id = a.staff_id WHERE a.guest_email = ? AND REPLACE(REPLACE(REPLACE(REPLACE(a.guest_phone, " ", ""), "+", ""), "-", ""), "/", "") LIKE ? ORDER BY a.appointment_at DESC');
         $stmt->execute([$email, '%' . $phoneDigits . '%']);
         $appointments = $stmt->fetchAll();
     }
@@ -120,6 +122,13 @@ render_header('Trova prenotazione');
                                                 <?php endforeach; ?>
                                             </select>
                                         </label>
+                                        <label>Operatore
+                                            <select name="staff_id" required>
+                                                <?php foreach ($staffMembers as $member): ?>
+                                                    <option value="<?= (int) $member['id'] ?>" <?= (int) $member['id'] === (int) $appointment['staff_id'] ? 'selected' : '' ?>><?= e($member['name']) ?> · <?= e($member['role_title']) ?></option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </label>
                                         <label>Data e ora
                                             <input class="liquid-datetime" type="datetime-local" name="appointment_at" value="<?= date('Y-m-d\TH:i', strtotime($appointment['appointment_at'])) ?>" required>
                                         </label>
@@ -143,6 +152,7 @@ render_header('Trova prenotazione');
                     <span>Data</span><strong><?= date('d/m/Y H:i', strtotime($appointment['appointment_at'])) ?></strong>
                     <span>Nome</span><strong><?= e($appointment['guest_name']) ?></strong>
                     <span>Telefono</span><strong><?= e($appointment['guest_phone']) ?></strong>
+                    <span>Operatore</span><strong><?= e($appointment['staff_name'] ?? 'Da assegnare') ?></strong>
                     <span>Durata</span><strong><?= (int) $appointment['duration_minutes'] ?> min</strong>
                     <span>Prezzo</span><strong>€<?= number_format((float) $appointment['price'], 2, ',', '.') ?></strong>
                     <?php if ($appointment['notes']): ?><span>Note</span><strong><?= e($appointment['notes']) ?></strong><?php endif; ?>

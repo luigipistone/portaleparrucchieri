@@ -16,10 +16,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         flash($stmt->rowCount() > 0 ? 'Appuntamento segnato come usufruito.' : 'Appuntamento non trovato.', $stmt->rowCount() > 0 ? 'success' : 'danger');
     } elseif ($action === 'appointment_update') {
         $serviceId = (int) ($_POST['service_id'] ?? 0);
+        $staffId = (int) ($_POST['staff_id'] ?? 0);
         $appointmentAt = trim($_POST['appointment_at'] ?? '');
         $notes = trim($_POST['notes'] ?? '');
 
-        if (!$serviceId || !$appointmentAt) {
+        if (!$serviceId || !$staffId || !$appointmentAt) {
             flash('Seleziona servizio, data e ora per modificare l’appuntamento.', 'danger');
         } else {
             $appointmentId = (int) $_POST['id'];
@@ -28,8 +29,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if ($checkStmt->fetch()) {
                 $appointmentDate = str_replace('T', ' ', $appointmentAt) . ':00';
-                $stmt = $pdo->prepare('UPDATE appointments SET service_id = ?, appointment_at = ?, notes = ? WHERE id = ?');
-                $stmt->execute([$serviceId, $appointmentDate, $notes, $appointmentId]);
+                $stmt = $pdo->prepare('UPDATE appointments SET service_id = ?, staff_id = ?, appointment_at = ?, notes = ? WHERE id = ?');
+                $stmt->execute([$serviceId, $staffId, $appointmentDate, $notes, $appointmentId]);
                 flash('Appuntamento modificato.');
             } else {
                 flash('Appuntamento non trovato.', 'danger');
@@ -59,7 +60,8 @@ if (in_array($statusFilter, ['pending', 'confirmed', 'cancelled', 'completed'], 
 }
 
 $services = $pdo->query('SELECT id, name FROM services ORDER BY is_active DESC, name ASC')->fetchAll();
-$stmt = $pdo->prepare("SELECT a.*, s.name AS service_name, s.duration_minutes FROM appointments a JOIN services s ON s.id = a.service_id $where ORDER BY a.appointment_at ASC");
+$staffMembers = $pdo->query('SELECT id, name, role_title FROM staff_members ORDER BY is_active DESC, name ASC')->fetchAll();
+$stmt = $pdo->prepare("SELECT a.*, s.name AS service_name, s.duration_minutes, st.name AS staff_name, st.role_title AS staff_role FROM appointments a JOIN services s ON s.id = a.service_id LEFT JOIN staff_members st ON st.id = a.staff_id $where ORDER BY a.appointment_at ASC");
 $stmt->execute($params);
 $appointments = $stmt->fetchAll();
 render_header('Calendario admin');
@@ -97,6 +99,7 @@ render_header('Calendario admin');
                                     <span><?= e($appointment['guest_email']) ?></span>
                                     <span><?= e($appointment['guest_phone']) ?></span>
                                     <span><?= (int) $appointment['duration_minutes'] ?> min</span>
+                                    <span><?= e($appointment['staff_name'] ?? 'Da assegnare') ?></span>
                                     <?php if ($appointment['booking_token']): ?><code>Cod. <?= e($appointment['booking_token']) ?></code><?php endif; ?>
                                 </div>
                                 <?php if ($appointment['notes']): ?><p class="appointment-notes">Note: <?= e($appointment['notes']) ?></p><?php endif; ?>
@@ -122,6 +125,13 @@ render_header('Calendario admin');
                                                 <select name="service_id" required>
                                                     <?php foreach ($services as $service): ?>
                                                         <option value="<?= (int) $service['id'] ?>" <?= (int) $service['id'] === (int) $appointment['service_id'] ? 'selected' : '' ?>><?= e($service['name']) ?></option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                            </label>
+                                            <label>Operatore
+                                                <select name="staff_id" required>
+                                                    <?php foreach ($staffMembers as $member): ?>
+                                                        <option value="<?= (int) $member['id'] ?>" <?= (int) $member['id'] === (int) $appointment['staff_id'] ? 'selected' : '' ?>><?= e($member['name']) ?> · <?= e($member['role_title']) ?></option>
                                                     <?php endforeach; ?>
                                                 </select>
                                             </label>

@@ -7,25 +7,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
 
     if ($action === 'appointment_delete') {
-        $stmt = $pdo->prepare('DELETE FROM appointments WHERE id = ? AND (user_id = ? OR guest_email = ?)');
+        $stmt = $pdo->prepare('DELETE FROM appointments WHERE id = ? AND status = "pending" AND (user_id = ? OR guest_email = ?)');
         $stmt->execute([(int) $_POST['id'], $user['id'], $user['email']]);
-        flash('Prenotazione eliminata.');
+        flash($stmt->rowCount() > 0 ? 'Prenotazione eliminata.' : 'Puoi eliminare solo appuntamenti in attesa.', $stmt->rowCount() > 0 ? 'success' : 'danger');
     } elseif ($action === 'appointment_update') {
         $serviceId = (int) ($_POST['service_id'] ?? 0);
+        $staffId = (int) ($_POST['staff_id'] ?? 0);
         $appointmentAt = trim($_POST['appointment_at'] ?? '');
         $notes = trim($_POST['notes'] ?? '');
 
-        if (!$serviceId || !$appointmentAt) {
+        if (!$serviceId || !$staffId || !$appointmentAt) {
             flash('Seleziona servizio, data e ora per modificare l’appuntamento.', 'danger');
         } else {
             $appointmentId = (int) $_POST['id'];
-            $checkStmt = $pdo->prepare('SELECT id FROM appointments WHERE id = ? AND status <> "cancelled" AND (user_id = ? OR guest_email = ?)');
+            $checkStmt = $pdo->prepare('SELECT id FROM appointments WHERE id = ? AND status IN ("pending", "confirmed") AND (user_id = ? OR guest_email = ?)');
             $checkStmt->execute([$appointmentId, $user['id'], $user['email']]);
 
             if ($checkStmt->fetch()) {
                 $appointmentDate = str_replace('T', ' ', $appointmentAt) . ':00';
-                $stmt = $pdo->prepare('UPDATE appointments SET service_id = ?, appointment_at = ?, notes = ? WHERE id = ?');
-                $stmt->execute([$serviceId, $appointmentDate, $notes, $appointmentId]);
+                $stmt = $pdo->prepare('UPDATE appointments SET service_id = ?, staff_id = ?, appointment_at = ?, notes = ? WHERE id = ?');
+                $stmt->execute([$serviceId, $staffId, $appointmentDate, $notes, $appointmentId]);
                 flash('Appuntamento modificato.');
             } else {
                 flash('Questo appuntamento non può essere modificato.', 'danger');
@@ -47,7 +48,8 @@ if ($completedCount > 0 && $fidelityProgress === 0) {
 $freeRewards = intdiv($completedCount, 10);
 
 $services = $pdo->query('SELECT id, name FROM services WHERE is_active = 1 ORDER BY name ASC')->fetchAll();
-$stmt = $pdo->prepare('SELECT a.*, s.name AS service_name, s.duration_minutes FROM appointments a JOIN services s ON s.id = a.service_id WHERE a.user_id = ? OR a.guest_email = ? ORDER BY a.appointment_at DESC');
+$staffMembers = $pdo->query('SELECT id, name, role_title FROM staff_members WHERE is_active = 1 ORDER BY name ASC')->fetchAll();
+$stmt = $pdo->prepare('SELECT a.*, s.name AS service_name, s.duration_minutes, st.name AS staff_name, st.role_title AS staff_role FROM appointments a JOIN services s ON s.id = a.service_id LEFT JOIN staff_members st ON st.id = a.staff_id WHERE a.user_id = ? OR a.guest_email = ? ORDER BY a.appointment_at DESC');
 $stmt->execute([$user['id'], $user['email']]);
 $appointments = $stmt->fetchAll();
 render_header('Area utente');
@@ -82,20 +84,21 @@ render_header('Area utente');
     <h2>I tuoi appuntamenti</h2>
     <div class="responsive-table">
         <table>
-            <thead><tr><th>Data</th><th>Servizio</th><th>Durata</th><th>Stato</th><th>Note</th><th>Azioni</th></tr></thead>
+            <thead><tr><th>Data</th><th>Servizio</th><th>Operatore</th><th>Durata</th><th>Stato</th><th>Note</th><th>Azioni</th></tr></thead>
             <tbody>
                 <?php foreach ($appointments as $appointment): ?>
                     <tr>
                         <td><?= date('d/m/Y H:i', strtotime($appointment['appointment_at'])) ?></td>
                         <td><?= e($appointment['service_name']) ?></td>
+                        <td><?= e($appointment['staff_name'] ?? 'Da assegnare') ?></td>
                         <td><?= (int) $appointment['duration_minutes'] ?> min</td>
                         <td><span class="badge <?= status_class($appointment['status']) ?>"><?= appointment_status_label($appointment['status']) ?></span></td>
                         <td><?= e($appointment['notes']) ?></td>
                         <td>
-                            <div class="appointment-actions compact-actions">
-                                <?php if ($appointment['status'] !== 'cancelled'): ?>
+                            <div class="appointment-icon-actions">
+                                <?php if (in_array($appointment['status'], ['pending', 'confirmed'], true)): ?>
                                     <details class="edit-details">
-                                        <summary class="btn mini"><?= icon_svg('edit') ?> Modifica</summary>
+                                        <summary class="icon-action" aria-label="Modifica appuntamento" title="Modifica appuntamento"><?= icon_svg('edit') ?></summary>
                                         <form class="appointment-edit-form" method="post">
                                             <input type="hidden" name="action" value="appointment_update">
                                             <input type="hidden" name="id" value="<?= (int) $appointment['id'] ?>">
@@ -116,16 +119,18 @@ render_header('Area utente');
                                         </form>
                                     </details>
                                 <?php endif; ?>
-                                <form method="post" onsubmit="return confirm('Eliminare questa prenotazione?')">
-                                    <input type="hidden" name="action" value="appointment_delete">
-                                    <input type="hidden" name="id" value="<?= (int) $appointment['id'] ?>">
-                                    <button class="icon-delete" type="submit" aria-label="Elimina prenotazione" title="Elimina prenotazione"><?= icon_svg('trash') ?></button>
-                                </form>
+                                <?php if ($appointment['status'] === 'pending'): ?>
+                                    <form method="post" onsubmit="return confirm('Eliminare questa prenotazione?')">
+                                        <input type="hidden" name="action" value="appointment_delete">
+                                        <input type="hidden" name="id" value="<?= (int) $appointment['id'] ?>">
+                                        <button class="icon-delete" type="submit" aria-label="Elimina prenotazione" title="Elimina prenotazione"><?= icon_svg('trash') ?></button>
+                                    </form>
+                                <?php endif; ?>
                             </div>
                         </td>
                     </tr>
                 <?php endforeach; ?>
-                <?php if (!$appointments): ?><tr><td colspan="6">Non hai ancora richieste.</td></tr><?php endif; ?>
+                <?php if (!$appointments): ?><tr><td colspan="7">Non hai ancora richieste.</td></tr><?php endif; ?>
             </tbody>
         </table>
     </div>

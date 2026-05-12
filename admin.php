@@ -21,6 +21,8 @@ $serviceStats = $pdo->query('SELECT
     COALESCE(AVG(duration_minutes), 0) AS average_duration
     FROM services')->fetch();
 
+$staffStats = $pdo->query('SELECT COUNT(*) AS total_staff, SUM(is_active = 1) AS active_staff FROM staff_members')->fetch();
+
 $userStats = $pdo->query('SELECT
     SUM(role = "customer") AS registered_customers,
     (SELECT COUNT(DISTINCT guest_email) FROM appointments WHERE user_id IS NULL) AS guest_customers,
@@ -50,7 +52,7 @@ $stmt->execute([$agendaDate]);
 if ((int) $stmt->fetchColumn() === 0) {
     $agendaDate = $pdo->query('SELECT DATE(appointment_at) FROM appointments WHERE appointment_at >= CURDATE() ORDER BY appointment_at ASC LIMIT 1')->fetchColumn() ?: $agendaDate;
 }
-$stmt = $pdo->prepare('SELECT a.*, s.name AS service_name, s.duration_minutes FROM appointments a JOIN services s ON s.id = a.service_id WHERE DATE(a.appointment_at) = ? ORDER BY a.appointment_at ASC');
+$stmt = $pdo->prepare('SELECT a.*, s.name AS service_name, s.duration_minutes, st.name AS staff_name FROM appointments a JOIN services s ON s.id = a.service_id LEFT JOIN staff_members st ON st.id = a.staff_id WHERE DATE(a.appointment_at) = ? ORDER BY a.appointment_at ASC');
 $stmt->execute([$agendaDate]);
 $nextAppointments = $stmt->fetchAll();
 
@@ -71,7 +73,7 @@ render_header('Admin');
             <a class="kpi-card glass-panel" href="admin_calendar.php?status=pending"><span class="kpi-icon"><?= icon_svg('calendar') ?></span><div><p>Richieste in attesa</p><strong><?= (int) $overview['pending'] ?></strong></div><ul><li><span>Oggi</span><b><?= (int) $overview['today'] ?></b></li><li><span>Prossimi 7 giorni</span><b><?= (int) $overview['next_7_days'] ?></b></li><li><span>Valore potenziale</span><b>€<?= number_format((float) $revenueStats['pending_value'], 2, ',', '.') ?></b></li></ul></a>
             <a class="kpi-card glass-panel" href="admin_calendar.php?status=confirmed"><span class="kpi-icon"><?= icon_svg('check') ?></span><div><p>Appuntamenti confermati</p><strong><?= $confirmedAppointments ?></strong></div><ul><li><span>Conversione richieste</span><b><?= $conversionRate ?>%</b></li><li><span>Futuri confermati</span><b><?= (int) $overview['confirmed_future'] ?></b></li><li><span>Valore confermato</span><b>€<?= number_format((float) $revenueStats['confirmed_revenue'], 2, ',', '.') ?></b></li></ul></a>
             <a class="kpi-card glass-panel" href="admin_services.php"><span class="kpi-icon"><?= icon_svg('services') ?></span><div><p>Servizi configurati</p><strong><?= (int) $serviceStats['total_services'] ?></strong></div><ul><li><span>Attivi</span><b><?= (int) $serviceStats['active_services'] ?></b></li><li><span>Nascosti</span><b><?= (int) $serviceStats['inactive_services'] ?></b></li><li><span>Prezzo medio</span><b>€<?= number_format((float) $serviceStats['average_price'], 2, ',', '.') ?></b></li></ul></a>
-            <a class="kpi-card glass-panel" href="admin_users.php"><span class="kpi-icon"><?= icon_svg('users') ?></span><div><p>Clienti</p><strong><?= (int) $userStats['registered_customers'] ?></strong></div><ul><li><span>Guest unici</span><b><?= (int) $userStats['guest_customers'] ?></b></li><li><span>Nuovi 30 giorni</span><b><?= (int) $userStats['new_customers_30_days'] ?></b></li><li><span>Durata media servizi</span><b><?= round((float) $serviceStats['average_duration']) ?> min</b></li></ul></a>
+            <a class="kpi-card glass-panel" href="admin_staff.php"><span class="kpi-icon"><?= icon_svg('staff') ?></span><div><p>Staff operativo</p><strong><?= (int) $staffStats['total_staff'] ?></strong></div><ul><li><span>Attivi</span><b><?= (int) $staffStats['active_staff'] ?></b></li><li><span>Clienti registrati</span><b><?= (int) $userStats['registered_customers'] ?></b></li><li><span>Guest unici</span><b><?= (int) $userStats['guest_customers'] ?></b></li></ul></a>
         </div>
 
         <section class="insights-grid reveal delay-1">
@@ -101,7 +103,7 @@ render_header('Admin');
                             <div>
                                 <h3><?= e($appointment['guest_name']) ?> · <?= e($appointment['service_name']) ?></h3>
                                 <div class="appointment-meta">
-                                    <span><?= e($appointment['guest_email']) ?></span><span><?= e($appointment['guest_phone']) ?></span><span><?= (int) $appointment['duration_minutes'] ?> min</span><?php if ($appointment['booking_token']): ?><code>Cod. <?= e($appointment['booking_token']) ?></code><?php endif; ?>
+                                    <span><?= e($appointment['guest_email']) ?></span><span><?= e($appointment['guest_phone']) ?></span><span><?= (int) $appointment['duration_minutes'] ?> min</span><span><?= e($appointment['staff_name'] ?? 'Da assegnare') ?></span><?php if ($appointment['booking_token']): ?><code>Cod. <?= e($appointment['booking_token']) ?></code><?php endif; ?>
                                 </div>
                                 <?php if ($appointment['notes']): ?><p class="appointment-notes">Note: <?= e($appointment['notes']) ?></p><?php endif; ?>
                             </div>

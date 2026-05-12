@@ -6,10 +6,10 @@ Web app PHP, JavaScript e MySQL per la gestione di un salone di parrucchieri da 
 
 - Frontend pubblico in stile liquid/glass design con animazioni, font moderni e UI responsive.
 - Richiesta appuntamento per utenti registrati e ospiti.
-- Conferma, annullamento e gestione note da backoffice admin.
+- Conferma, annullamento, assegnazione operatore e gestione note da backoffice admin.
 - Registrazione/login clienti con dashboard personale, modifica profilo e fidelity card.
 - Backend admin strutturato con menu, pagine separate e dashboard KPI dettagliata.
-- CRUD servizi dal pannello admin.
+- CRUD servizi e staff/operatori dal pannello admin.
 - Vista calendario/lista appuntamenti ordinata per data.
 - Azioni principali in pagina senza reload grazie a richieste AJAX progressive.
 - Consultazione prenotazioni guest tramite codice numerico ricevuto via email, email/telefono e QR code.
@@ -23,6 +23,7 @@ mysql -u root -p < migrations/001_create_core_tables.sql
 mysql -u root -p < migrations/002_seed_initial_data.sql
 mysql -u root -p < migrations/003_add_booking_token_to_appointments.sql
 mysql -u root -p < migrations/004_add_completed_appointment_status.sql
+mysql -u root -p < migrations/005_add_staff_and_appointment_assignment.sql
 ```
 
 2. Copiare `config.local.php.example` in `config.local.php` e inserire le credenziali database reali. Il file `config.local.php` è escluso da Git per non salvare password nel repository.

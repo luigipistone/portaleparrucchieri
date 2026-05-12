@@ -1,8 +1,14 @@
 let revealObserver;
 
-function initRevealAnimations() {
+function initRevealAnimations(animate = true) {
     if (revealObserver) {
         revealObserver.disconnect();
+    }
+
+    const revealElements = document.querySelectorAll('.reveal');
+    if (!animate) {
+        revealElements.forEach((element) => element.classList.add('visible'));
+        return;
     }
 
     revealObserver = new IntersectionObserver((entries) => {
@@ -14,7 +20,7 @@ function initRevealAnimations() {
         });
     }, { threshold: 0.18 });
 
-    document.querySelectorAll('.reveal').forEach((element) => revealObserver.observe(element));
+    revealElements.forEach((element) => revealObserver.observe(element));
 }
 
 function initMagnetButtons() {
@@ -46,8 +52,8 @@ function initAppointmentMinDate() {
     }
 }
 
-function initApp() {
-    initRevealAnimations();
+function initApp({ animateReveals = true } = {}) {
+    initRevealAnimations(animateReveals);
     initMagnetButtons();
     initAppointmentMinDate();
 }
@@ -66,8 +72,10 @@ function replacePage(html, url, pushState = true) {
         history.pushState({ ajax: true }, '', url);
     }
 
-    initApp();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    initApp({ animateReveals: false });
+    if (pushState) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 }
 
 async function fetchAndSwap(url, options = {}) {

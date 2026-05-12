@@ -201,9 +201,9 @@ function render_header(string $title): void
                 <a href="index.php#prenota">Prenota</a>
                 <a href="booking_lookup.php">Trova prenotazione</a>
                 <?php if ($user && $user['role'] === 'admin'): ?>
-                    <a href="admin.php">Admin</a>
+                    <a href="admin.php">Dashboard</a>
                 <?php elseif ($user): ?>
-                    <a href="dashboard.php">Area utente</a>
+                    <a href="dashboard.php">Dashboard</a>
                     <a href="profile.php">Profilo</a>
                 <?php endif; ?>
                 <?php if ($user): ?>

@@ -284,3 +284,18 @@ button:disabled { cursor: wait; opacity: .68; }
     .appointment-row .inline-admin { grid-template-columns: 1fr; }
     .booking-result-head { flex-direction: column; }
 }
+
+
+label:has(:required)::after { content: 'Obbligatorio'; width: fit-content; padding: 4px 8px; border-radius: 999px; color: #fff; background: var(--danger); font-size: 10px; font-weight: 900; letter-spacing: .05em; text-transform: uppercase; }
+.auth-card h1 { font-size: clamp(32px, 5vw, 54px); margin-bottom: 30px; }
+.auth-card .liquid-form { margin-top: 8px; }
+.badge, .whatsapp-btn { min-height: 34px; align-items: center; }
+.danger-btn { color: #fff; background: linear-gradient(135deg, var(--danger), #fb7185); }
+.appointment-forms { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; }
+.appointment-forms .inline-admin { grid-column: auto; }
+.appointment-notes { margin: 7px 0 0; padding-left: 2px; font-size: 12px; line-height: 1.35; }
+.calendar-list.compact-calendar .calendar-item time { align-self: stretch; height: 100%; }
+
+@media (max-width: 860px) {
+    .appointment-forms { grid-template-columns: 1fr; }
+}

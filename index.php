@@ -52,7 +52,7 @@ render_header('Prenotazioni barbiere');
         </div>
     </div>
     <div class="hero-card glass-panel reveal delay-1">
-        <div class="orbital-icon">💈</div>
+        <div class="orbital-icon"><?= icon_svg('barber') ?></div>
         <h2>Next slot</h2>
         <p>Le prenotazioni entrano in stato <strong>in attesa</strong> e diventano effettive solo dopo conferma admin.</p>
         <div class="pulse-row"><span></span><span></span><span></span></div>
@@ -67,7 +67,7 @@ render_header('Prenotazioni barbiere');
     <div class="cards-grid">
         <?php foreach ($services as $service): ?>
             <article class="service-card glass-panel">
-                <div class="service-icon">✂</div>
+                <div class="service-icon"><?= icon_svg('scissors') ?></div>
                 <h3><?= e($service['name']) ?></h3>
                 <p><?= e($service['description']) ?></p>
                 <div class="service-meta">

@@ -60,7 +60,9 @@ main { width: min(1180px, calc(100% - 32px)); margin: 0 auto 80px; }
     backdrop-filter: blur(22px) saturate(150%);
 }
 .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; letter-spacing: -.04em; }
+.ui-icon { width: 1.25em; height: 1.25em; flex: 0 0 auto; stroke: currentColor; }
 .brand-mark { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 14px; color: #ffffff; background: var(--accent); }
+.brand-mark .ui-icon { width: 22px; height: 22px; }
 .main-nav { display: flex; align-items: center; gap: 18px; color: var(--muted); font-size: 14px; }
 .main-nav a:hover { color: var(--text); }
 .nav-pill { padding: 10px 14px; border-radius: 999px; background: rgba(255,255,255,.58); color: var(--text) !important; }
@@ -91,10 +93,12 @@ p { color: var(--muted); line-height: 1.7; }
 .btn:hover { transform: translateY(-2px); box-shadow: 0 16px 44px rgba(51, 94, 172, .18); }
 .btn.primary { color: #ffffff; background: linear-gradient(135deg, var(--accent), #2b2b2b); }
 .btn.ghost { border: 1px solid rgba(255,255,255,.72); background: transparent; }
-.btn.mini { padding: 9px 12px; font-size: 12px; }
+.btn.mini { padding: 9px 12px; font-size: 12px; gap: 6px; }
+.btn .ui-icon, .btn.mini .ui-icon { width: 15px; height: 15px; }
 .hero-card { min-height: 440px; display: grid; align-content: center; justify-items: center; text-align: center; padding: 34px; position: relative; overflow: hidden; }
 .hero-card::before { content: ""; position: absolute; inset: auto -20% -34% -20%; height: 56%; background: radial-gradient(circle, rgba(51, 94, 172, .26), transparent 66%); animation: wave 6s ease-in-out infinite; }
-.orbital-icon { display: grid; place-items: center; width: 112px; height: 112px; margin-bottom: 22px; border-radius: 42% 58% 59% 41%; background: rgba(255,255,255,.14); font-size: 58px; animation: morph 7s ease-in-out infinite alternate; }
+.orbital-icon { display: grid; place-items: center; width: 112px; height: 112px; margin-bottom: 22px; border-radius: 42% 58% 59% 41%; color: #ffffff; background: linear-gradient(135deg, var(--accent), #2b2b2b); animation: morph 7s ease-in-out infinite alternate; }
+.orbital-icon .ui-icon { width: 58px; height: 58px; }
 .pulse-row { display: flex; gap: 8px; margin-top: 24px; }
 .pulse-row span { width: 11px; height: 11px; border-radius: 999px; background: var(--accent); animation: pulse 1s infinite alternate; }
 .pulse-row span:nth-child(2) { animation-delay: .2s; }
@@ -105,7 +109,8 @@ p { color: var(--muted); line-height: 1.7; }
 .cards-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
 .service-card { padding: 26px; transition: transform .25s ease, background .25s ease; }
 .service-card:hover { transform: translateY(-8px) rotate(-1deg); background: rgba(255,255,255,.76); }
-.service-icon { width: 52px; height: 52px; display: grid; place-items: center; border-radius: 18px; background: linear-gradient(135deg, var(--accent-2), var(--accent)); margin-bottom: 20px; }
+.service-icon { width: 52px; height: 52px; display: grid; place-items: center; border-radius: 18px; color: #ffffff; background: linear-gradient(135deg, var(--accent-2), var(--accent)); margin-bottom: 20px; }
+.service-icon .ui-icon { width: 28px; height: 28px; }
 .service-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; color: var(--muted); }
 .service-meta strong { color: var(--text); font-size: 24px; }
 
@@ -178,7 +183,8 @@ th { color: var(--text); font-size: 12px; text-transform: uppercase; letter-spac
 .admin-menu { position: sticky; top: 104px; padding: 20px; }
 .admin-menu nav { display: grid; gap: 10px; }
 .admin-menu-link { display: flex; align-items: center; gap: 12px; padding: 13px 14px; border-radius: 18px; color: var(--muted); font-weight: 800; transition: background .25s ease, color .25s ease, transform .25s ease; }
-.admin-menu-link span { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 12px; background: rgba(255,255,255,.58); color: var(--accent); }
+.admin-menu-link span { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 12px; color: #ffffff; background: linear-gradient(135deg, var(--accent), #2b2b2b); }
+.admin-menu-link .ui-icon { width: 18px; height: 18px; }
 .admin-menu-link:hover, .admin-menu-link.active { color: var(--text); background: rgba(255,255,255,.72); transform: translateX(4px); }
 .stats-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
 .stat-card { padding: 22px; min-height: 150px; display: grid; align-content: space-between; color: var(--muted); transition: transform .25s ease, background .25s ease; }
@@ -209,8 +215,8 @@ th { color: var(--text); font-size: 12px; text-transform: uppercase; letter-spac
 .kpi-card > div { display: grid; gap: 8px; }
 .kpi-card p { margin: 0; }
 .kpi-card strong { display: block; color: var(--text); font-size: clamp(44px, 5vw, 68px); letter-spacing: -.08em; line-height: .85; }
-.kpi-icon { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 17px; color: #ffffff; background: linear-gradient(135deg, var(--accent), #2b2b2b); font-weight: 900; }
-.kpi-icon.success { background: linear-gradient(135deg, var(--success), var(--accent)); }
+.kpi-icon { display: grid; place-items: center; width: 60px; height: 60px; border-radius: 21px; color: #ffffff; background: linear-gradient(135deg, var(--accent), #2b2b2b); font-weight: 900; }
+.kpi-icon .ui-icon { width: 32px; height: 32px; }
 .kpi-card ul { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
 .kpi-card li { display: flex; justify-content: space-between; gap: 14px; padding-top: 10px; border-top: 1px solid rgba(43, 43, 43, .1); font-size: 13px; }
 .kpi-card li b { color: var(--text); white-space: nowrap; }
@@ -276,8 +282,15 @@ button:disabled { cursor: wait; opacity: .68; }
 .appointment-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; color: var(--muted); font-size: 12px; line-height: 1.15; }
 .appointment-meta span, .appointment-meta code { padding: 4px 8px; border-radius: 999px; background: rgba(255,255,255,.68); }
 .appointment-actions { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
+.appointment-actions.compact-actions { align-items: flex-start; margin-top: 0; }
 .appointment-row .inline-admin { grid-column: 1 / -1; grid-template-columns: 132px minmax(160px, 1fr) auto; gap: 8px; }
 .appointment-row .inline-admin input, .appointment-row .inline-admin select { padding: 10px 12px; border-radius: 13px; }
+.appointment-edit-form { display: grid; gap: 10px; min-width: min(360px, calc(100vw - 52px)); margin-top: 10px; padding: 14px; border-radius: 18px; background: rgba(255,255,255,.72); box-shadow: 0 18px 44px rgba(43, 43, 43, .12); }
+.appointment-edit-form label { font-size: 12px; }
+.edit-details { position: relative; }
+.edit-details summary { list-style: none; }
+.edit-details summary::-webkit-details-marker { display: none; }
+.admin-edit { grid-column: 1 / -1; }
 .booking-result-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
 .booking-status-actions { display: flex; align-items: center; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
 
@@ -292,7 +305,7 @@ button:disabled { cursor: wait; opacity: .68; }
 .auth-card .liquid-form { margin-top: 8px; }
 .badge, .whatsapp-btn { min-height: 34px; align-items: center; }
 .danger-btn { color: #ffffff; background: linear-gradient(135deg, var(--danger), #2b2b2b); }
-.appointment-forms { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; }
+.appointment-forms { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: start; }
 .appointment-forms .inline-admin { grid-column: auto; }
 .appointment-notes { margin: 7px 0 0; padding-left: 2px; font-size: 12px; line-height: 1.35; }
 .calendar-list.compact-calendar .calendar-item time { align-self: stretch; height: 100%; }
@@ -302,10 +315,12 @@ button:disabled { cursor: wait; opacity: .68; }
 }
 .admin-panel h2 { margin-bottom: 22px; }
 .mini-card[open] summary { margin-bottom: 16px; }
-.icon-delete { display: inline-grid; place-items: center; width: 36px; height: 36px; border: 0; border-radius: 999px; color: var(--danger); background: transparent; cursor: pointer; font-size: 17px; transition: color .2s ease, background .2s ease, transform .2s ease; }
+.icon-delete { display: inline-grid; place-items: center; width: 38px; height: 38px; border: 0; border-radius: 999px; color: var(--danger); background: transparent; cursor: pointer; transition: color .2s ease, background .2s ease, transform .2s ease; }
+.icon-delete .ui-icon { width: 19px; height: 19px; }
 .icon-delete:hover { color: #ffffff; background: var(--danger); transform: translateY(-1px); }
 .theme-toggle { display: inline-grid; grid-template-columns: 1fr 1fr; gap: 2px; width: 54px; height: 32px; padding: 3px; border: 0; border-radius: 999px; background: rgba(255,255,255,.68); color: var(--text); cursor: pointer; box-shadow: inset 0 0 0 1px rgba(43,43,43,.12); }
-.theme-toggle span { display: grid; place-items: center; border-radius: 999px; font-size: 14px; }
+.theme-toggle span { display: grid; place-items: center; border-radius: 999px; }
+.theme-toggle .ui-icon { width: 15px; height: 15px; }
 [data-theme="light"] .theme-toggle .sun, [data-theme="dark"] .theme-toggle .moon { background: var(--accent); color: #ffffff; }
 [data-theme="dark"] { --bg: #2b2b2b; --panel: rgba(43, 43, 43, .72); --panel-strong: rgba(43, 43, 43, .86); --text: #ffffff; --muted: rgba(239, 239, 239, .72); --shadow: 0 28px 80px rgba(43, 43, 43, .42); }
 [data-theme="dark"] body { background: radial-gradient(circle at top left, #335eac, var(--bg) 52%); }

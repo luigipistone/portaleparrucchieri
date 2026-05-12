@@ -82,7 +82,7 @@ render_header('Servizi admin');
                             <label class="full">Descrizione<textarea name="description" rows="3"><?= e($service['description']) ?></textarea></label>
                             <button class="btn ghost full" type="submit">Salva modifiche</button>
                         </form>
-                        <form method="post" onsubmit="return confirm('Eliminare il servizio?')"><input type="hidden" name="action" value="service_delete"><input type="hidden" name="id" value="<?= (int) $service['id'] ?>"><button class="icon-delete" type="submit" aria-label="Elimina servizio" title="Elimina servizio">🗑</button></form>
+                        <form method="post" onsubmit="return confirm('Eliminare il servizio?')"><input type="hidden" name="action" value="service_delete"><input type="hidden" name="id" value="<?= (int) $service['id'] ?>"><button class="icon-delete" type="submit" aria-label="Elimina servizio" title="Elimina servizio"><?= icon_svg('trash') ?></button></form>
                     </details>
                 <?php endforeach; ?>
             </div>

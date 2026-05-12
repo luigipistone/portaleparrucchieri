@@ -10,6 +10,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'appoi
     exit;
 }
 
+$completedStmt = db()->prepare('SELECT COUNT(*) FROM appointments WHERE status = "completed" AND (user_id = ? OR guest_email = ?)');
+$completedStmt->execute([$user['id'], $user['email']]);
+$completedCount = (int) $completedStmt->fetchColumn();
+$fidelityProgress = $completedCount % 10;
+if ($completedCount > 0 && $fidelityProgress === 0) {
+    $fidelityProgress = 10;
+}
+$freeRewards = intdiv($completedCount, 10);
+
 $stmt = db()->prepare('SELECT a.*, s.name AS service_name, s.duration_minutes FROM appointments a JOIN services s ON s.id = a.service_id WHERE a.user_id = ? OR a.guest_email = ? ORDER BY a.appointment_at DESC');
 $stmt->execute([$user['id'], $user['email']]);
 $appointments = $stmt->fetchAll();
@@ -26,6 +35,21 @@ render_header('Area utente');
         <a class="btn primary" href="index.php#prenota">Nuova richiesta</a>
     </div>
 </section>
+
+<section class="fidelity-card glass-panel reveal">
+    <div>
+        <p class="eyebrow">Fidelity</p>
+        <h2>Ogni 10 servizi, barba omaggio.</h2>
+        <p>Ogni appuntamento segnato come <strong>usufruito</strong> dall’admin aggiunge un timbro alla tessera.</p>
+    </div>
+    <div class="fidelity-stamps" aria-label="Progressi fidelity">
+        <?php for ($stamp = 1; $stamp <= 10; $stamp++): ?>
+            <span class="<?= $stamp <= $fidelityProgress ? 'filled' : '' ?>"><?= $stamp ?></span>
+        <?php endfor; ?>
+    </div>
+    <p class="fidelity-summary"><?= $completedCount ?> servizi usufruiti · <?= $freeRewards ?> omaggi maturati</p>
+</section>
+
 <section class="table-card glass-panel reveal">
     <h2>I tuoi appuntamenti</h2>
     <div class="responsive-table">
@@ -43,7 +67,7 @@ render_header('Area utente');
                             <form method="post" onsubmit="return confirm('Eliminare questa prenotazione?')">
                                 <input type="hidden" name="action" value="appointment_delete">
                                 <input type="hidden" name="id" value="<?= (int) $appointment['id'] ?>">
-                                <button class="btn mini danger-btn" type="submit">Elimina</button>
+                                <button class="icon-delete" type="submit" aria-label="Elimina prenotazione" title="Elimina prenotazione">🗑</button>
                             </form>
                         </td>
                     </tr>

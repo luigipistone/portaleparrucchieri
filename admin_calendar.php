@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         flash('Prenotazione eliminata.');
     } else {
         $status = $_POST['status'] ?? 'pending';
-        if (!in_array($status, ['pending', 'confirmed', 'cancelled'], true)) {
+        if (!in_array($status, ['pending', 'confirmed', 'cancelled', 'completed'], true)) {
             flash('Stato appuntamento non valido.', 'danger');
         } else {
             $stmt = $pdo->prepare('UPDATE appointments SET status = ?, admin_notes = ? WHERE id = ?');
@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $statusFilter = $_GET['status'] ?? 'all';
 $where = '';
 $params = [];
-if (in_array($statusFilter, ['pending', 'confirmed', 'cancelled'], true)) {
+if (in_array($statusFilter, ['pending', 'confirmed', 'cancelled', 'completed'], true)) {
     $where = 'WHERE a.status = ?';
     $params[] = $statusFilter;
 }
@@ -54,6 +54,7 @@ render_header('Calendario admin');
             <a class="<?= $statusFilter === 'pending' ? 'active' : '' ?>" href="admin_calendar.php?status=pending" data-ajax-link>In attesa</a>
             <a class="<?= $statusFilter === 'confirmed' ? 'active' : '' ?>" href="admin_calendar.php?status=confirmed" data-ajax-link>Confermati</a>
             <a class="<?= $statusFilter === 'cancelled' ? 'active' : '' ?>" href="admin_calendar.php?status=cancelled" data-ajax-link>Annullati</a>
+            <a class="<?= $statusFilter === 'completed' ? 'active' : '' ?>" href="admin_calendar.php?status=completed" data-ajax-link>Usufruiti</a>
         </div>
 
         <div class="glass-panel admin-panel reveal delay-1">
@@ -81,14 +82,14 @@ render_header('Calendario admin');
                                 <form class="inline-admin" method="post">
                                     <input type="hidden" name="action" value="appointment_status">
                                     <input type="hidden" name="id" value="<?= (int) $appointment['id'] ?>">
-                                    <select name="status"><option value="pending" <?= $appointment['status'] === 'pending' ? 'selected' : '' ?>>In attesa</option><option value="confirmed" <?= $appointment['status'] === 'confirmed' ? 'selected' : '' ?>>Confermato</option><option value="cancelled" <?= $appointment['status'] === 'cancelled' ? 'selected' : '' ?>>Annullato</option></select>
+                                    <select name="status"><option value="pending" <?= $appointment['status'] === 'pending' ? 'selected' : '' ?>>In attesa</option><option value="confirmed" <?= $appointment['status'] === 'confirmed' ? 'selected' : '' ?>>Confermato</option><option value="cancelled" <?= $appointment['status'] === 'cancelled' ? 'selected' : '' ?>>Annullato</option><option value="completed" <?= $appointment['status'] === 'completed' ? 'selected' : '' ?>>Usufruito</option></select>
                                     <input name="admin_notes" placeholder="Note admin" value="<?= e($appointment['admin_notes']) ?>">
                                     <button class="btn mini" type="submit">Aggiorna</button>
                                 </form>
                                 <form method="post" onsubmit="return confirm('Eliminare definitivamente questa prenotazione?')">
                                     <input type="hidden" name="action" value="appointment_delete">
                                     <input type="hidden" name="id" value="<?= (int) $appointment['id'] ?>">
-                                    <button class="btn mini danger-btn" type="submit">Elimina</button>
+                                    <button class="icon-delete" type="submit" aria-label="Elimina prenotazione" title="Elimina prenotazione">🗑</button>
                                 </form>
                             </div>
                         </div>

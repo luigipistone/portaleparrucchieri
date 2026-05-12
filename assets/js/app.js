@@ -88,10 +88,30 @@ function initAppointmentMinDate() {
     });
 }
 
+
+function initThemeToggle() {
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.dataset.theme = savedTheme;
+
+    document.querySelectorAll('.theme-toggle').forEach((button) => {
+        if (button.dataset.themeReady === 'true') {
+            return;
+        }
+
+        button.dataset.themeReady = 'true';
+        button.addEventListener('click', () => {
+            const nextTheme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+            document.documentElement.dataset.theme = nextTheme;
+            localStorage.setItem('theme', nextTheme);
+        });
+    });
+}
+
 function initApp({ animateReveals = true } = {}) {
     initRevealAnimations(animateReveals);
     initMagnetButtons();
     initAppointmentMinDate();
+    initThemeToggle();
 }
 
 function replacePage(html, url, pushState = true) {

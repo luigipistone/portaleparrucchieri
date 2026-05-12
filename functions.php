@@ -56,6 +56,7 @@ function appointment_status_label(string $status): string
     return match ($status) {
         'confirmed' => 'Confermato',
         'cancelled' => 'Annullato',
+        'completed' => 'Usufruito',
         default => 'In attesa',
     };
 }
@@ -65,6 +66,7 @@ function status_class(string $status): string
     return match ($status) {
         'confirmed' => 'success',
         'cancelled' => 'danger',
+        'completed' => 'success',
         default => 'warning',
     };
 }
@@ -206,6 +208,7 @@ function render_header(string $title): void
                     <a href="dashboard.php">Dashboard</a>
                     <a href="profile.php">Profilo</a>
                 <?php endif; ?>
+                <button class="theme-toggle" type="button" aria-label="Cambia tema" title="Cambia tema"><span class="sun">☀</span><span class="moon">☾</span></button>
                 <?php if ($user): ?>
                     <a class="nav-pill" href="logout.php">Esci</a>
                 <?php else: ?>

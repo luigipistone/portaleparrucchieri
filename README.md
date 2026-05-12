@@ -11,6 +11,7 @@ Web app PHP, JavaScript e MySQL per la gestione di un salone di parrucchieri da 
 - Backend admin strutturato con menu, pagine separate e dashboard KPI dettagliata.
 - CRUD servizi dal pannello admin.
 - Vista calendario/lista appuntamenti ordinata per data.
+- Azioni principali in pagina senza reload grazie a richieste AJAX progressive.
 
 ## Installazione locale
 

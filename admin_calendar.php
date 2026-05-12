@@ -42,10 +42,10 @@ render_header('Calendario admin');
     <?php render_admin_menu('calendar'); ?>
     <div class="backend-content">
         <div class="filter-tabs glass-panel reveal delay-1">
-            <a class="<?= $statusFilter === 'all' ? 'active' : '' ?>" href="admin_calendar.php">Tutti</a>
-            <a class="<?= $statusFilter === 'pending' ? 'active' : '' ?>" href="admin_calendar.php?status=pending">In attesa</a>
-            <a class="<?= $statusFilter === 'confirmed' ? 'active' : '' ?>" href="admin_calendar.php?status=confirmed">Confermati</a>
-            <a class="<?= $statusFilter === 'cancelled' ? 'active' : '' ?>" href="admin_calendar.php?status=cancelled">Annullati</a>
+            <a class="<?= $statusFilter === 'all' ? 'active' : '' ?>" href="admin_calendar.php" data-ajax-link>Tutti</a>
+            <a class="<?= $statusFilter === 'pending' ? 'active' : '' ?>" href="admin_calendar.php?status=pending" data-ajax-link>In attesa</a>
+            <a class="<?= $statusFilter === 'confirmed' ? 'active' : '' ?>" href="admin_calendar.php?status=confirmed" data-ajax-link>Confermati</a>
+            <a class="<?= $statusFilter === 'cancelled' ? 'active' : '' ?>" href="admin_calendar.php?status=cancelled" data-ajax-link>Annullati</a>
         </div>
 
         <div class="glass-panel admin-panel reveal delay-1">

@@ -244,3 +244,7 @@ th { color: var(--text); font-size: 12px; text-transform: uppercase; letter-spac
     .profile-grid { grid-template-columns: 1fr; }
     .compact-actions { justify-content: flex-start; }
 }
+
+.ajax-loading { cursor: progress; }
+.ajax-loading main { opacity: .72; transition: opacity .2s ease; }
+button:disabled { cursor: wait; opacity: .68; }

@@ -261,17 +261,17 @@ button:disabled { cursor: wait; opacity: .68; }
 @media (max-width: 860px) {
     .booking-lookup-grid { grid-template-columns: 1fr; }
 }
-.booking-token-code { display: inline-flex; width: fit-content; padding: 9px 13px; border-radius: 16px; color: #06110e; background: var(--accent); font-size: clamp(18px, 3vw, 28px); letter-spacing: .1em; }
+.booking-token-code { display: inline-flex; width: fit-content; padding: 8px 12px; border-radius: 14px; color: #06110e; background: var(--accent); font-size: clamp(16px, 2.4vw, 22px); letter-spacing: .08em; }
 
 
 .calendar-list.compact-calendar { gap: 8px; }
 .calendar-list.compact-calendar .calendar-item { grid-template-columns: 72px minmax(0, 1fr); gap: 12px; padding: 10px 12px; border-radius: 18px; align-items: center; }
-.calendar-list.compact-calendar .calendar-item time { min-height: 58px; gap: 2px; align-content: center; font-size: 15px; line-height: 1; }
-.calendar-list.compact-calendar .calendar-item time span { font-size: 15px; line-height: 1; }
-.appointment-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px 14px; align-items: center; }
+.calendar-list.compact-calendar .calendar-item time { min-height: 54px; gap: 1px; align-content: center; justify-items: center; font-size: 14px; line-height: 1; font-variant-numeric: tabular-nums; }
+.calendar-list.compact-calendar .calendar-item time span { font-size: 14px; line-height: 1; font-variant-numeric: tabular-nums; }
+.appointment-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 12px; align-items: center; }
 .appointment-row h3 { font-size: 16px; letter-spacing: -.035em; }
-.appointment-meta { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 7px; color: var(--muted); font-size: 12px; line-height: 1.2; }
-.appointment-meta span, .appointment-meta code { padding: 5px 8px; border-radius: 999px; background: rgba(255,255,255,.68); }
+.appointment-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; color: var(--muted); font-size: 12px; line-height: 1.15; }
+.appointment-meta span, .appointment-meta code { padding: 4px 8px; border-radius: 999px; background: rgba(255,255,255,.68); }
 .appointment-actions { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
 .appointment-row .inline-admin { grid-column: 1 / -1; grid-template-columns: 132px minmax(160px, 1fr) auto; gap: 8px; }
 .appointment-row .inline-admin input, .appointment-row .inline-admin select { padding: 10px 12px; border-radius: 13px; }

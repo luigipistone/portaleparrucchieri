@@ -39,7 +39,7 @@ render_header('Trova prenotazione');
     <form class="profile-card glass-panel reveal liquid-form single" method="post">
         <p class="eyebrow">Ricerca</p>
         <label>Codice prenotazione
-            <input name="token" value="<?= e($token) ?>" placeholder="Token opzionale">
+            <input name="token" value="<?= e($token) ?>" placeholder="Codice a 6 cifre" inputmode="numeric" pattern="[0-9]{6,7}" maxlength="7">
         </label>
         <label>Email usata in prenotazione
             <input type="email" name="email" value="<?= e($email) ?>">

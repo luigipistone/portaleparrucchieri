@@ -43,7 +43,7 @@ Credenziali admin iniziali:
 
 Le modifiche al database vanno aggiunte come nuovi file in `migrations/`, usando prefissi progressivi (`003_...sql`, `004_...sql`, ecc.).
 
-`schema.sql` resta disponibile come snapshot completo dello schema iniziale, mentre la cartella `migrations/` è il riferimento consigliato per applicare modifiche incrementali in ambienti condivisi o di produzione.
+`schema.sql` resta disponibile solo come snapshot iniziale di bootstrap. Ogni modifica successiva al database deve essere consegnata come nuova migration in `migrations/` e applicata in ordine numerico.
 
 ## Deploy
 

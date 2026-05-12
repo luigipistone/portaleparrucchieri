@@ -10,6 +10,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare('DELETE FROM appointments WHERE id = ?');
         $stmt->execute([(int) $_POST['id']]);
         flash('Prenotazione eliminata.');
+    } elseif ($action === 'appointment_complete') {
+        $stmt = $pdo->prepare('UPDATE appointments SET status = "completed" WHERE id = ?');
+        $stmt->execute([(int) $_POST['id']]);
+        flash($stmt->rowCount() > 0 ? 'Appuntamento segnato come usufruito.' : 'Appuntamento non trovato.', $stmt->rowCount() > 0 ? 'success' : 'danger');
     } elseif ($action === 'appointment_update') {
         $serviceId = (int) ($_POST['service_id'] ?? 0);
         $appointmentAt = trim($_POST['appointment_at'] ?? '');
@@ -108,32 +112,39 @@ render_header('Calendario admin');
                                     <input name="admin_notes" placeholder="Note admin" value="<?= e($appointment['admin_notes']) ?>">
                                     <button class="btn mini" type="submit">Aggiorna stato</button>
                                 </form>
-                                <details class="edit-details admin-edit">
-                                    <summary class="btn mini"><?= icon_svg('edit') ?> Modifica dati</summary>
-                                    <form class="appointment-edit-form" method="post">
-                                        <input type="hidden" name="action" value="appointment_update">
+                                <div class="appointment-icon-actions">
+                                    <details class="edit-details admin-edit">
+                                        <summary class="icon-action" aria-label="Modifica appuntamento" title="Modifica appuntamento"><?= icon_svg('edit') ?></summary>
+                                        <form class="appointment-edit-form" method="post">
+                                            <input type="hidden" name="action" value="appointment_update">
+                                            <input type="hidden" name="id" value="<?= (int) $appointment['id'] ?>">
+                                            <label>Servizio
+                                                <select name="service_id" required>
+                                                    <?php foreach ($services as $service): ?>
+                                                        <option value="<?= (int) $service['id'] ?>" <?= (int) $service['id'] === (int) $appointment['service_id'] ? 'selected' : '' ?>><?= e($service['name']) ?></option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                            </label>
+                                            <label>Data e ora
+                                                <input class="liquid-datetime" type="datetime-local" name="appointment_at" value="<?= date('Y-m-d\TH:i', strtotime($appointment['appointment_at'])) ?>" required>
+                                            </label>
+                                            <label>Note cliente
+                                                <textarea name="notes" rows="2"><?= e($appointment['notes']) ?></textarea>
+                                            </label>
+                                            <button class="btn mini primary" type="submit">Salva modifiche</button>
+                                        </form>
+                                    </details>
+                                    <form method="post" onsubmit="return confirm('Segnare questo appuntamento come usufruito?')">
+                                        <input type="hidden" name="action" value="appointment_complete">
                                         <input type="hidden" name="id" value="<?= (int) $appointment['id'] ?>">
-                                        <label>Servizio
-                                            <select name="service_id" required>
-                                                <?php foreach ($services as $service): ?>
-                                                    <option value="<?= (int) $service['id'] ?>" <?= (int) $service['id'] === (int) $appointment['service_id'] ? 'selected' : '' ?>><?= e($service['name']) ?></option>
-                                                <?php endforeach; ?>
-                                            </select>
-                                        </label>
-                                        <label>Data e ora
-                                            <input class="liquid-datetime" type="datetime-local" name="appointment_at" value="<?= date('Y-m-d\TH:i', strtotime($appointment['appointment_at'])) ?>" required>
-                                        </label>
-                                        <label>Note cliente
-                                            <textarea name="notes" rows="2"><?= e($appointment['notes']) ?></textarea>
-                                        </label>
-                                        <button class="btn mini primary" type="submit">Salva modifiche</button>
+                                        <button class="icon-action complete" type="submit" aria-label="Segna come usufruito" title="Segna come usufruito"><?= icon_svg('check') ?></button>
                                     </form>
-                                </details>
-                                <form method="post" onsubmit="return confirm('Eliminare definitivamente questa prenotazione?')">
-                                    <input type="hidden" name="action" value="appointment_delete">
-                                    <input type="hidden" name="id" value="<?= (int) $appointment['id'] ?>">
-                                    <button class="icon-delete" type="submit" aria-label="Elimina prenotazione" title="Elimina prenotazione"><?= icon_svg('trash') ?></button>
-                                </form>
+                                    <form method="post" onsubmit="return confirm('Eliminare definitivamente questa prenotazione?')">
+                                        <input type="hidden" name="action" value="appointment_delete">
+                                        <input type="hidden" name="id" value="<?= (int) $appointment['id'] ?>">
+                                        <button class="icon-delete" type="submit" aria-label="Elimina prenotazione" title="Elimina prenotazione"><?= icon_svg('trash') ?></button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </article>

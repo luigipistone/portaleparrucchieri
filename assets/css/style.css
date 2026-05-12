@@ -290,7 +290,8 @@ button:disabled { cursor: wait; opacity: .68; }
 .edit-details { position: relative; }
 .edit-details summary { list-style: none; }
 .edit-details summary::-webkit-details-marker { display: none; }
-.admin-edit { grid-column: 1 / -1; }
+.appointment-icon-actions { display: flex; align-items: flex-start; justify-content: flex-end; gap: 8px; }
+.admin-edit .appointment-edit-form { position: absolute; right: 0; z-index: 5; }
 .booking-result-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
 .booking-status-actions { display: flex; align-items: center; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
 
@@ -315,8 +316,13 @@ button:disabled { cursor: wait; opacity: .68; }
 }
 .admin-panel h2 { margin-bottom: 22px; }
 .mini-card[open] summary { margin-bottom: 16px; }
-.icon-delete { display: inline-grid; place-items: center; width: 38px; height: 38px; border: 0; border-radius: 999px; color: var(--danger); background: transparent; cursor: pointer; transition: color .2s ease, background .2s ease, transform .2s ease; }
-.icon-delete .ui-icon { width: 19px; height: 19px; }
+.icon-action, .icon-delete { display: inline-grid; place-items: center; width: 38px; height: 38px; border: 0; border-radius: 999px; background: transparent; cursor: pointer; transition: color .2s ease, background .2s ease, transform .2s ease; }
+.icon-action { color: var(--accent); }
+.icon-action.complete { color: #2b2b2b; background: var(--warning); }
+.icon-delete { color: var(--danger); }
+.icon-action .ui-icon, .icon-delete .ui-icon { width: 19px; height: 19px; }
+.icon-action:hover { color: #ffffff; background: var(--accent); transform: translateY(-1px); }
+.icon-action.complete:hover { color: #ffffff; background: linear-gradient(135deg, var(--accent), #2b2b2b); }
 .icon-delete:hover { color: #ffffff; background: var(--danger); transform: translateY(-1px); }
 .theme-toggle { display: inline-grid; grid-template-columns: 1fr 1fr; gap: 2px; width: 54px; height: 32px; padding: 3px; border: 0; border-radius: 999px; background: rgba(255,255,255,.68); color: var(--text); cursor: pointer; box-shadow: inset 0 0 0 1px rgba(43,43,43,.12); }
 .theme-toggle span { display: grid; place-items: center; border-radius: 999px; }

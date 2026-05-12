@@ -1,0 +1,8 @@
+<?php
+return [
+    'DB_HOST' => 'localhost',
+    'DB_NAME' => 'portale_parrucchieri',
+    'DB_USER' => 'nome_utente_database',
+    'DB_PASS' => 'password_database',
+    'APP_NAME' => 'Liquid Barber',
+];

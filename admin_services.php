@@ -55,9 +55,9 @@ render_header('Servizi admin');
             <h2>Nuovo servizio</h2>
             <form class="liquid-form service-form" method="post">
                 <input type="hidden" name="action" value="service_save">
-                <label>Nome<input name="name" required></label>
-                <label>Durata minuti<input type="number" name="duration_minutes" min="5" value="30" required></label>
-                <label>Prezzo<input type="number" name="price" min="0" step="0.01" required></label>
+                <label><span class="field-label">Nome <span class="required-marker" aria-hidden="true">*</span></span><input name="name" required></label>
+                <label><span class="field-label">Durata minuti <span class="required-marker" aria-hidden="true">*</span></span><input type="number" name="duration_minutes" min="5" value="30" required></label>
+                <label><span class="field-label">Prezzo <span class="required-marker" aria-hidden="true">*</span></span><input type="number" name="price" min="0" step="0.01" required></label>
                 <label class="check"><input type="checkbox" name="is_active" checked> Attivo</label>
                 <label class="full">Descrizione<textarea name="description" rows="3"></textarea></label>
                 <button class="btn primary full" type="submit">Aggiungi servizio</button>
@@ -75,9 +75,9 @@ render_header('Servizi admin');
                         </summary>
                         <form class="liquid-form service-form" method="post">
                             <input type="hidden" name="action" value="service_save"><input type="hidden" name="id" value="<?= (int) $service['id'] ?>">
-                            <label>Nome<input name="name" value="<?= e($service['name']) ?>" required></label>
-                            <label>Durata<input type="number" name="duration_minutes" value="<?= (int) $service['duration_minutes'] ?>" required></label>
-                            <label>Prezzo<input type="number" step="0.01" name="price" value="<?= e($service['price']) ?>" required></label>
+                            <label><span class="field-label">Nome <span class="required-marker" aria-hidden="true">*</span></span><input name="name" value="<?= e($service['name']) ?>" required></label>
+                            <label><span class="field-label">Durata <span class="required-marker" aria-hidden="true">*</span></span><input type="number" name="duration_minutes" value="<?= (int) $service['duration_minutes'] ?>" required></label>
+                            <label><span class="field-label">Prezzo <span class="required-marker" aria-hidden="true">*</span></span><input type="number" step="0.01" name="price" value="<?= e($service['price']) ?>" required></label>
                             <label class="check"><input type="checkbox" name="is_active" <?= $service['is_active'] ? 'checked' : '' ?>> Attivo</label>
                             <label class="full">Descrizione<textarea name="description" rows="3"><?= e($service['description']) ?></textarea></label>
                             <button class="btn ghost full" type="submit">Salva modifiche</button>

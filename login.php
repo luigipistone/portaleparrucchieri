@@ -23,8 +23,8 @@ render_header('Accesso');
     <p class="eyebrow">Bentornato</p>
     <h1>Accedi alla tua area</h1>
     <form class="liquid-form single" method="post">
-        <label>Email<input type="email" name="email" required></label>
-        <label>Password<input type="password" name="password" required></label>
+        <label><span class="field-label">Email <span class="required-marker" aria-hidden="true">*</span></span><input type="email" name="email" required></label>
+        <label><span class="field-label">Password <span class="required-marker" aria-hidden="true">*</span></span><input type="password" name="password" required></label>
         <button class="btn primary magnet" type="submit">Accedi</button>
     </form>
     <p>Non hai un account? <a href="register.php">Registrati</a></p>

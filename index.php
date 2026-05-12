@@ -86,7 +86,7 @@ render_header('Prenotazioni barbiere');
         <p>Puoi prenotare come ospite o accedere per ritrovare tutte le tue richieste nella dashboard.</p>
     </div>
     <form class="liquid-form" method="post">
-        <label>Servizio
+        <label><span class="field-label">Servizio <span class="required-marker" aria-hidden="true">*</span></span>
             <select name="service_id" required>
                 <option value="">Seleziona</option>
                 <?php foreach ($services as $service): ?>
@@ -94,16 +94,16 @@ render_header('Prenotazioni barbiere');
                 <?php endforeach; ?>
             </select>
         </label>
-        <label>Data e ora
+        <label><span class="field-label">Data e ora <span class="required-marker" aria-hidden="true">*</span></span>
             <input class="liquid-datetime" type="datetime-local" name="appointment_at" step="1800" inputmode="none" onkeydown="return false" onpaste="return false" required>
         </label>
-        <label>Nome
+        <label><span class="field-label">Nome <span class="required-marker" aria-hidden="true">*</span></span>
             <input type="text" name="guest_name" value="<?= e($user['name'] ?? '') ?>" required>
         </label>
-        <label>Email
+        <label><span class="field-label">Email <span class="required-marker" aria-hidden="true">*</span></span>
             <input type="email" name="guest_email" value="<?= e($user['email'] ?? '') ?>" required>
         </label>
-        <label>Telefono
+        <label><span class="field-label">Telefono <span class="required-marker" aria-hidden="true">*</span></span>
             <input type="tel" name="guest_phone" value="<?= e($user['phone'] ?? '') ?>" required>
         </label>
         <label class="full">Note

@@ -29,10 +29,10 @@ render_header('Registrazione');
     <p class="eyebrow">Nuovo cliente</p>
     <h1>Crea il tuo profilo</h1>
     <form class="liquid-form single" method="post">
-        <label>Nome<input type="text" name="name" required></label>
-        <label>Email<input type="email" name="email" required></label>
+        <label><span class="field-label">Nome <span class="required-marker" aria-hidden="true">*</span></span><input type="text" name="name" required></label>
+        <label><span class="field-label">Email <span class="required-marker" aria-hidden="true">*</span></span><input type="email" name="email" required></label>
         <label>Telefono<input type="tel" name="phone"></label>
-        <label>Password<input type="password" name="password" minlength="8" required></label>
+        <label><span class="field-label">Password <span class="required-marker" aria-hidden="true">*</span></span><input type="password" name="password" minlength="8" required></label>
         <button class="btn primary magnet" type="submit">Registrati</button>
     </form>
 </section>

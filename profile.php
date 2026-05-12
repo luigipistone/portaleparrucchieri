@@ -62,10 +62,10 @@ render_header('Modifica profilo');
             <p class="eyebrow">Dati account</p>
             <h2>Informazioni personali</h2>
         </div>
-        <label>Nome
+        <label><span class="field-label">Nome <span class="required-marker" aria-hidden="true">*</span></span>
             <input type="text" name="name" value="<?= e($user['name']) ?>" required>
         </label>
-        <label>Email
+        <label><span class="field-label">Email <span class="required-marker" aria-hidden="true">*</span></span>
             <input type="email" name="email" value="<?= e($user['email']) ?>" required>
         </label>
         <label>Telefono

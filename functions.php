@@ -70,6 +70,28 @@ function status_class(string $status): string
 }
 
 
+
+function make_booking_token(): string
+{
+    return bin2hex(random_bytes(16));
+}
+
+function whatsapp_link(?string $phone): ?string
+{
+    $digits = preg_replace('/\D+/', '', $phone ?? '');
+    if (!$digits) {
+        return null;
+    }
+
+    if (str_starts_with($digits, '00')) {
+        $digits = substr($digits, 2);
+    } elseif (str_starts_with($digits, '0')) {
+        $digits = '39' . ltrim($digits, '0');
+    }
+
+    return 'https://wa.me/' . $digits;
+}
+
 function render_admin_menu(string $active): void
 {
     $items = [
@@ -119,6 +141,7 @@ function render_header(string $title): void
             <nav class="main-nav">
                 <a href="index.php#servizi">Servizi</a>
                 <a href="index.php#prenota">Prenota</a>
+                <a href="booking_lookup.php">Trova prenotazione</a>
                 <?php if ($user && $user['role'] === 'admin'): ?>
                     <a href="admin.php">Admin</a>
                 <?php elseif ($user): ?>

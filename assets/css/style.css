@@ -248,3 +248,16 @@ th { color: var(--text); font-size: 12px; text-transform: uppercase; letter-spac
 .ajax-loading { cursor: progress; }
 .ajax-loading main { opacity: .72; transition: opacity .2s ease; }
 button:disabled { cursor: wait; opacity: .68; }
+
+.liquid-datetime { color-scheme: dark; cursor: pointer; caret-color: transparent; }
+.liquid-datetime::-webkit-calendar-picker-indicator { cursor: pointer; border-radius: 12px; padding: 6px; background: linear-gradient(135deg, var(--accent), #d9fff5); filter: none; }
+.whatsapp-btn { width: fit-content; margin: 4px 0 12px; padding: 9px 13px; color: #06110e; background: linear-gradient(135deg, #25d366, #9fffc5); font-size: 12px; }
+.booking-lookup-grid { display: grid; grid-template-columns: minmax(280px, .8fr) minmax(0, 1.2fr); gap: 22px; margin-top: 34px; align-items: start; }
+.booking-result { display: grid; gap: 22px; }
+.booking-token-box { display: grid; gap: 10px; padding: 16px; border-radius: 22px; background: rgba(255,255,255,.07); }
+.booking-token-box span { color: var(--muted); font-weight: 800; }
+.qr-card { width: 140px; height: 140px; padding: 10px; border-radius: 18px; background: #fff; }
+
+@media (max-width: 860px) {
+    .booking-lookup-grid { grid-template-columns: 1fr; }
+}

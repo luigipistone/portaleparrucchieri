@@ -12,13 +12,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $guestEmail = trim($_POST['guest_email'] ?? ($user['email'] ?? ''));
     $guestPhone = trim($_POST['guest_phone'] ?? ($user['phone'] ?? ''));
 
-    if (!$serviceId || !$appointmentAt || !$guestName || !$guestEmail) {
-        flash('Compila servizio, data, nome ed email per richiedere l’appuntamento.', 'danger');
+    if (!$serviceId || !$appointmentAt || !$guestName || !$guestEmail || !$guestPhone) {
+        flash('Compila servizio, data, nome, email e telefono per richiedere l’appuntamento.', 'danger');
     } else {
-        $stmt = db()->prepare('INSERT INTO appointments (user_id, service_id, guest_name, guest_email, guest_phone, appointment_at, notes, status) VALUES (?, ?, ?, ?, ?, ?, ?, "pending")');
-        $stmt->execute([$user['id'] ?? null, $serviceId, $guestName, $guestEmail, $guestPhone, str_replace('T', ' ', $appointmentAt) . ':00', $notes]);
-        flash('Richiesta inviata! Ti contatteremo dopo la conferma dell’admin.');
-        header('Location: index.php#prenota');
+        $bookingToken = make_booking_token();
+        $stmt = db()->prepare('INSERT INTO appointments (user_id, service_id, guest_name, guest_email, guest_phone, appointment_at, notes, booking_token, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, "pending")');
+        $stmt->execute([$user['id'] ?? null, $serviceId, $guestName, $guestEmail, $guestPhone, str_replace('T', ' ', $appointmentAt) . ':00', $notes, $bookingToken]);
+        flash('Richiesta inviata! Salva il link di riepilogo per controllare lo stato della prenotazione.');
+        header('Location: booking_lookup.php?token=' . urlencode($bookingToken));
         exit;
     }
 }
@@ -33,6 +34,7 @@ render_header('Prenotazioni barbiere');
         <div class="hero-actions">
             <a class="btn primary magnet" href="#prenota">Richiedi appuntamento</a>
             <a class="btn ghost" href="login.php">Area riservata</a>
+            <a class="btn ghost" href="booking_lookup.php">Trova prenotazione</a>
         </div>
     </div>
     <div class="hero-card glass-panel reveal delay-1">
@@ -79,7 +81,7 @@ render_header('Prenotazioni barbiere');
             </select>
         </label>
         <label>Data e ora
-            <input type="datetime-local" name="appointment_at" required>
+            <input class="liquid-datetime" type="datetime-local" name="appointment_at" step="1800" inputmode="none" onkeydown="return false" onpaste="return false" required>
         </label>
         <label>Nome
             <input type="text" name="guest_name" value="<?= e($user['name'] ?? '') ?>" required>
@@ -88,7 +90,7 @@ render_header('Prenotazioni barbiere');
             <input type="email" name="guest_email" value="<?= e($user['email'] ?? '') ?>" required>
         </label>
         <label>Telefono
-            <input type="tel" name="guest_phone" value="<?= e($user['phone'] ?? '') ?>">
+            <input type="tel" name="guest_phone" value="<?= e($user['phone'] ?? '') ?>" required>
         </label>
         <label class="full">Note
             <textarea name="notes" rows="4" placeholder="Preferenze, richieste particolari o stile desiderato"></textarea>

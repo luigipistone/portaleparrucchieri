@@ -44,12 +44,24 @@ function initMagnetButtons() {
 }
 
 function initAppointmentMinDate() {
-    const appointmentInput = document.querySelector('input[type="datetime-local"]');
-    if (appointmentInput) {
+    document.querySelectorAll('input[type="datetime-local"]').forEach((appointmentInput) => {
         const now = new Date();
-        now.setMinutes(now.getMinutes() - now.getTimezoneOffset() + 30);
+        const minutes = now.getMinutes();
+        const roundedMinutes = minutes <= 30 ? 30 : 60;
+        now.setMinutes(roundedMinutes, 0, 0);
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
         appointmentInput.min = now.toISOString().slice(0, 16);
-    }
+        appointmentInput.step = appointmentInput.step || '1800';
+
+        if (appointmentInput.dataset.pickerReady === 'true') {
+            return;
+        }
+
+        appointmentInput.dataset.pickerReady = 'true';
+        appointmentInput.addEventListener('keydown', (event) => event.preventDefault());
+        appointmentInput.addEventListener('paste', (event) => event.preventDefault());
+        appointmentInput.addEventListener('drop', (event) => event.preventDefault());
+    });
 }
 
 function initApp({ animateReveals = true } = {}) {
@@ -115,7 +127,7 @@ document.addEventListener('submit', (event) => {
     }
 
     const method = (form.method || 'GET').toUpperCase();
-    const action = form.action || window.location.href;
+    const action = form.getAttribute('action') || window.location.href;
     const body = method === 'GET' ? null : new FormData(form);
     const url = method === 'GET' ? `${action}?${new URLSearchParams(new FormData(form)).toString()}` : action;
 

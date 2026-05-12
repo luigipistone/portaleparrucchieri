@@ -32,11 +32,13 @@ CREATE TABLE IF NOT EXISTS appointments (
     status ENUM('pending', 'confirmed', 'cancelled') NOT NULL DEFAULT 'pending',
     notes TEXT NULL,
     admin_notes TEXT NULL,
+    booking_token VARCHAR(64) NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_appointments_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
     CONSTRAINT fk_appointments_service FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE RESTRICT,
     INDEX idx_appointments_date (appointment_at),
-    INDEX idx_appointments_status (status)
+    INDEX idx_appointments_status (status),
+    UNIQUE INDEX idx_appointments_booking_token (booking_token)
 ) ENGINE=InnoDB;
 
 INSERT INTO users (name, email, phone, password_hash, role)

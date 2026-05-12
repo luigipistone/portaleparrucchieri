@@ -12,6 +12,7 @@ Web app PHP, JavaScript e MySQL per la gestione di un salone di parrucchieri da 
 - CRUD servizi dal pannello admin.
 - Vista calendario/lista appuntamenti ordinata per data.
 - Azioni principali in pagina senza reload grazie a richieste AJAX progressive.
+- Consultazione prenotazioni guest tramite email/telefono o link personale con QR code.
 
 ## Installazione locale
 
@@ -20,6 +21,7 @@ Web app PHP, JavaScript e MySQL per la gestione di un salone di parrucchieri da 
 ```bash
 mysql -u root -p < migrations/001_create_core_tables.sql
 mysql -u root -p < migrations/002_seed_initial_data.sql
+mysql -u root -p < migrations/003_add_booking_token_to_appointments.sql
 ```
 
 2. Copiare `config.local.php.example` in `config.local.php` e inserire le credenziali database reali. Il file `config.local.php` è escluso da Git per non salvare password nel repository.
